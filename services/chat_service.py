@@ -59,7 +59,7 @@ def test_connection():
             }
         ],
 
-        max_tokens=3
+        max_tokens=500
     )
 
     return True
