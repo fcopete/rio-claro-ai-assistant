@@ -11,3 +11,10 @@ def home(): return render_template('index.html')
 @app.route('/health')
 def health(): return {'status':'healthy'}
 if __name__=='__main__': app.run()
+app.route("/health", methods=["GET"])
+def health():
+
+    return {
+        "status": "healthy",
+        "application": "Rio Claro AI Assistant"
+    }, 200
