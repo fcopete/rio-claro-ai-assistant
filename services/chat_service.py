@@ -1,65 +1,51 @@
-from openai import AzureOpenAI
+from openai import OpenAI
 
 from config import (
     AZURE_OPENAI_ENDPOINT,
     AZURE_OPENAI_API_KEY,
-    AZURE_OPENAI_API_VERSION,
     AZURE_OPENAI_DEPLOYMENT
 )
 
-client = AzureOpenAI(
-    api_key=AZURE_OPENAI_API_KEY,
-    api_version=AZURE_OPENAI_API_VERSION,
-    azure_endpoint=AZURE_OPENAI_ENDPOINT
+client = OpenAI(
+    base_url=AZURE_OPENAI_ENDPOINT,
+    api_key=AZURE_OPENAI_API_KEY
 )
 
 SYSTEM_PROMPT = """
-You are Rio Claro assistant.
+You are Rio Claro AI Assistant.
 """
 
 
 def ask_chatbot(question):
 
-    response = (
-        client.chat.completions.create(
-            model=
-                AZURE_OPENAI_DEPLOYMENT,
-            messages=[
-                {
-                    "role":"system",
-                    "content":
-                    SYSTEM_PROMPT
-                },
-                {
-                    "role":"user",
-                    "content":
-                    question
-                }
-            ]
-        )
+    response = client.responses.create(
+
+        model=
+            AZURE_OPENAI_DEPLOYMENT,
+
+        input=[
+            {
+                "role": "system",
+                "content": SYSTEM_PROMPT
+            },
+            {
+                "role": "user",
+                "content": question
+            }
+        ]
     )
 
-    return (
-        response
-        .choices[0]
-        .message.content
-    )
+    return response.output_text
 
 
 def test_connection():
 
-    client.chat.completions.create(
+    response = client.responses.create(
+
         model=
             AZURE_OPENAI_DEPLOYMENT,
 
-        messages=[
-            {
-                "role":"user",
-                "content":"test"
-            }
-        ],
-
-        max_tokens=500
+        input="test"
     )
 
-    return True
+    return response.output_text
