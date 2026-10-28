@@ -1,3 +1,42 @@
-.env
+# Python
+
 __pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual Environments
+
 venv/
+.venv/
+
+# Environment
+
+.env
+
+# Flask Uploads
+
+uploads/
+
+# IDE
+
+.vscode/
+.idea/
+
+# Logs
+
+*.log
+
+# OS
+
+.DS_Store
+Thumbs.db
+
+# Build
+
+dist/
+build/
+
+# Cache
+
+.pytest_cache/
+.mypy_cache/
