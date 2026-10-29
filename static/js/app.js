@@ -1,11 +1,21 @@
+console.log(
+    "Rio Claro app.js cargado"
+);
+
 const API = {
     HEALTH: "/health",
     CHAT: "/api/chat/ask",
-    INVOICE: "/api/invoice/upload"
+    INVOICE: "/api/invoice/upload",
+    INVOICE_ANALYZE: "/api/invoice/analyze",
+    EXECUTIVE_SUMMARY: "/api/executive/sales-summary",
+    CUSTOMER_PENDING: "/api/customer/pending",
+    ADMIN_STATUS: "/api/admin/status"
 };
 
 let chatCounter = 0;
 let invoiceCounter = 0;
+
+let conversationHistory = [];
 
 document.addEventListener(
     "DOMContentLoaded",
@@ -17,48 +27,41 @@ function initialize() {
     bindEvents();
 
     checkHealth();
+
+    loadExecutiveSummary();
+
+    loadCustomerMetrics();
 }
 
 function bindEvents() {
 
-    const chatButton =
-        document.getElementById(
-            "chatButton"
-        );
-
-    const uploadButton =
-        document.getElementById(
-            "uploadButton"
-        );
-
-    const question =
-        document.getElementById(
-            "question"
-        );
-
-    if (chatButton) {
-
-        chatButton.addEventListener(
+    document
+        .getElementById("chatButton")
+        ?.addEventListener(
             "click",
             sendQuestion
         );
-    }
 
-    if (uploadButton) {
-
-        uploadButton.addEventListener(
+    document
+        .getElementById("uploadButton")
+        ?.addEventListener(
             "click",
             uploadInvoice
         );
-    }
 
-    if (question) {
+    document
+        .getElementById("speechButton")
+        ?.addEventListener(
+            "click",
+            startSpeech
+        );
 
-        question.addEventListener(
+    document
+        .getElementById("question")
+        ?.addEventListener(
             "keydown",
             handleEnter
         );
-    }
 }
 
 function handleEnter(event) {
@@ -134,47 +137,39 @@ function updateStatus(
 
     if (healthy) {
 
-        if (system) {
+        if (system)
             system.textContent =
                 "🟢 Operativa";
-        }
 
-        if (openAI) {
+        if (openAI)
             openAI.textContent =
                 "🟢 Disponible";
-        }
 
-        if (documentAI) {
+        if (documentAI)
             documentAI.textContent =
                 "🟢 Disponible";
-        }
 
-        if (metric) {
+        if (metric)
             metric.textContent =
                 "🟢 Operativo";
-        }
 
     } else {
 
-        if (system) {
+        if (system)
             system.textContent =
                 "🔴 Error";
-        }
 
-        if (openAI) {
+        if (openAI)
             openAI.textContent =
                 "🔴 Error";
-        }
 
-        if (documentAI) {
+        if (documentAI)
             documentAI.textContent =
                 "🔴 Error";
-        }
 
-        if (metric) {
+        if (metric)
             metric.textContent =
                 "🔴 Error";
-        }
     }
 }
 
@@ -207,6 +202,13 @@ async function sendQuestion() {
         "user"
     );
 
+    conversationHistory.push({
+
+        role: "user",
+
+        content: question
+    });
+
     textarea.value = "";
 
     toggleLoader(
@@ -229,7 +231,11 @@ async function sendQuestion() {
 
                     body:
                         JSON.stringify({
-                            question
+
+                            question,
+
+                            history:
+                                conversationHistory
                         })
                 }
             );
@@ -250,6 +256,14 @@ async function sendQuestion() {
             "Sin respuesta.",
             "assistant"
         );
+
+        conversationHistory.push({
+
+            role: "assistant",
+
+            content:
+                data.answer
+        });
 
         chatCounter++;
 
@@ -273,13 +287,13 @@ async function sendQuestion() {
 
         appendMessage(
             error.message ||
-            "Error al conectar con el asistente.",
+            "Error al conectar con Azure OpenAI.",
             "assistant"
         );
 
         showMessage(
             error.message ||
-            "Error al conectar.",
+            "Error en el chat.",
             "error"
         );
 
@@ -312,12 +326,33 @@ async function uploadInvoice() {
         return;
     }
 
+    const file =
+        fileInput.files[0];
+
+    const maxSize =
+        10 *
+        1024 *
+        1024;
+
+    if (
+        file.size >
+        maxSize
+    ) {
+
+        showMessage(
+            "Archivo superior a 10 MB.",
+            "error"
+        );
+
+        return;
+    }
+
     const formData =
         new FormData();
 
     formData.append(
         "file",
-        fileInput.files[0]
+        file
     );
 
     toggleLoader(
@@ -343,7 +378,7 @@ async function uploadInvoice() {
 
             throw new Error(
                 data.message ||
-                "Error procesando factura"
+                "Error procesando factura."
             );
         }
 
@@ -364,16 +399,10 @@ async function uploadInvoice() {
 
         invoiceCounter++;
 
-        const counter =
-            document.getElementById(
-                "invoiceCounter"
-            );
-
-        if (counter) {
-
-            counter.textContent =
-                invoiceCounter;
-        }
+        document.getElementById(
+            "invoiceCounter"
+        ).textContent =
+            invoiceCounter;
 
         showMessage(
             "Factura procesada correctamente.",
@@ -387,20 +416,8 @@ async function uploadInvoice() {
             error
         );
 
-        const output =
-            document.getElementById(
-                "invoiceResult"
-            );
-
-        if (output) {
-
-            output.textContent =
-                error.message;
-        }
-
         showMessage(
-            error.message ||
-            "Error procesando factura.",
+            error.message,
             "error"
         );
 
@@ -409,6 +426,135 @@ async function uploadInvoice() {
         toggleLoader(
             "invoiceLoader",
             false
+        );
+    }
+}
+
+async function loadExecutiveSummary() {
+
+    try {
+
+        const response =
+            await fetch(
+                API.EXECUTIVE_SUMMARY
+            );
+
+        const data =
+            await response.json();
+
+        if (
+            data.total_sales
+        ) {
+
+            const metric =
+                document.getElementById(
+                    "salesMetric"
+                );
+
+            if (metric) {
+
+                metric.textContent =
+                    "$" +
+                    Number(
+                        data.total_sales
+                    ).toLocaleString();
+            }
+        }
+
+    } catch (error) {
+
+        console.error(
+            error
+        );
+    }
+}
+
+async function loadCustomerMetrics() {
+
+    try {
+
+        const response =
+            await fetch(
+                API.CUSTOMER_PENDING
+            );
+
+        const data =
+            await response.json();
+
+        const pending =
+            document.getElementById(
+                "pendingCustomers"
+            );
+
+        if (
+            pending &&
+            data.pending_cases
+        ) {
+
+            pending.textContent =
+                data.pending_cases;
+        }
+
+    } catch (error) {
+
+        console.error(
+            error
+        );
+    }
+}
+
+function startSpeech() {
+
+    try {
+
+        const SpeechRecognition =
+            window.SpeechRecognition ||
+            window.webkitSpeechRecognition;
+
+        if (
+            !SpeechRecognition
+        ) {
+
+            showMessage(
+                "Reconocimiento de voz no disponible.",
+                "error"
+            );
+
+            return;
+        }
+
+        const recognition =
+            new SpeechRecognition();
+
+        recognition.lang =
+            "es-MX";
+
+        recognition.start();
+
+        recognition.onresult =
+            function(event) {
+
+                const text =
+                    event.results[0][0]
+                    .transcript;
+
+                document
+                    .getElementById(
+                        "question"
+                    )
+                    .value =
+                        text;
+            };
+
+    } catch (error) {
+
+        console.error(
+            error
+        );
+
+        showMessage(
+            "Error iniciando reconocimiento de voz.",
+            "error"
         );
     }
 }
@@ -437,8 +583,12 @@ function appendMessage(
             ? "user-message"
             : "ai-message";
 
-    item.textContent =
-        text;
+    item.innerHTML =
+        String(text)
+            .replace(
+                /\n/g,
+                "<br>"
+            );
 
     container.appendChild(
         item

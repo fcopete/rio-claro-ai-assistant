@@ -13,7 +13,6 @@ chat_bp = Blueprint(
     __name__
 )
 
-
 @chat_bp.route(
     "/ask",
     methods=["POST"]
@@ -32,12 +31,15 @@ def ask():
                     "JSON payload required"
             }), 400
 
-        question = (
-            body.get(
-                "question",
-                ""
-            ).strip()
-        )
+        question = payload.get(
+    "question",
+    ""
+)
+
+history = payload.get(
+    "history",
+    []
+)
 
         if not question:
 
@@ -47,9 +49,10 @@ def ask():
                     "Question is required"
             }), 400
 
-        answer = ask_chatbot(
-            question
-        )
+       answer = ask_chatbot(
+    question,
+    history
+)
 
         return jsonify({
             "success": True,

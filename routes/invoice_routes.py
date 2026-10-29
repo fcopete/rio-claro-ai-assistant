@@ -8,6 +8,47 @@ from services.document_service import (
     analyze_invoice
 )
 
+from services.invoice_ai_service import (
+    analyze_invoice_risk
+)
+
+@invoice_bp.route(
+    "/analyze",
+    methods=["POST"]
+)
+def ai_analysis():
+
+    try:
+
+        payload = request.get_json()
+
+        invoice_data = payload.get(
+            "invoice",
+            {}
+        )
+
+        result = analyze_invoice_risk(
+            invoice_data
+        )
+
+        return jsonify({
+
+            "success": True,
+
+            "analysis": result
+
+        })
+
+    except Exception as ex:
+
+        return jsonify({
+
+            "success": False,
+
+            "message": str(ex)
+
+        }), 500
+
 invoice_bp = Blueprint(
     "invoice",
     __name__
@@ -89,3 +130,25 @@ def upload_invoice():
             "success": False,
             "message": str(ex)
         }), 500
+
+messages = [
+
+    {
+        "role": "system",
+        "content":
+            SYSTEM_PROMPT
+    }
+]
+
+if history:
+
+    messages.extend(
+        history
+    )
+
+messages.append({
+
+    "role": "user",
+
+    "content": question
+})

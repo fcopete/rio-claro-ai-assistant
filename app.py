@@ -5,6 +5,33 @@ from routes.invoice_routes import invoice_bp
 from routes.project_routes import project_bp
 from routes.errors import register_handlers
 
+from routes.executive_routes import (
+    executive_bp
+)
+
+from routes.customer_routes import (
+    customer_bp
+)
+
+from routes.admin_routes import (
+    admin_bp
+)
+
+app.register_blueprint(
+    executive_bp,
+    url_prefix="/api/executive"
+)
+
+app.register_blueprint(
+    customer_bp,
+    url_prefix="/api/customer"
+)
+
+app.register_blueprint(
+    admin_bp,
+    url_prefix="/api/admin"
+)
+
 from config import (
     AZURE_OPENAI_DEPLOYMENT
 )
