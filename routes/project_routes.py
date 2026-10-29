@@ -1,5 +1,4 @@
-from flask import Blueprint,jsonify
+from flask import Blueprint, jsonify
 project_bp=Blueprint("project",__name__)
 @project_bp.route("/info")
-def info():
-    return jsonify({"success":True})
+def info(): return jsonify({"success":True})

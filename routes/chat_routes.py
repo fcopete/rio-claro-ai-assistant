@@ -6,5 +6,5 @@ def ask():
     payload=request.get_json()
     question=payload.get("question","").strip()
     history=payload.get("history",[])
-    answer=ask_chatbot(question,history)
-    return jsonify({"success":True,"answer":answer})
+    if not question: return jsonify({"success":False,"message":"Question is required"}),400
+    return jsonify({"success":True,"answer":ask_chatbot(question,history)})

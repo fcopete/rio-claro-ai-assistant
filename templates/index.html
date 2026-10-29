@@ -13,17 +13,27 @@
         name="description"
         content="Río Claro AI Assistant">
 
+    <meta
+        name="theme-color"
+        content="#0078D4">
+
     <title>
         Río Claro AI Assistant
     </title>
+
+    <!-- Bootstrap -->
 
     <link
         rel="stylesheet"
         href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
 
+    <!-- Bootstrap Icons -->
+
     <link
         rel="stylesheet"
         href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <!-- CSS -->
 
     <link
         rel="stylesheet"
@@ -40,8 +50,11 @@
         <div class="brand">
 
             <h3>
+
                 <i class="bi bi-building"></i>
+
                 Río Claro
+
             </h3>
 
             <span>
@@ -100,6 +113,8 @@
 
     <main class="main-content">
 
+        <!-- TOPBAR -->
+
         <header class="topbar">
 
             <h2>
@@ -118,7 +133,9 @@
 
             <div
                 id="messageBox"
-                class="hidden">
+                class="hidden"
+                role="alert"
+                aria-live="polite">
             </div>
 
             <!-- DASHBOARD -->
@@ -136,9 +153,7 @@
                             </h6>
 
                             <h3 id="openAIStatus">
-
                                 🟢 Disponible
-
                             </h3>
 
                         </div>
@@ -154,9 +169,7 @@
                             </h6>
 
                             <h3 id="invoiceCounter">
-
                                 0
-
                             </h3>
 
                         </div>
@@ -172,9 +185,7 @@
                             </h6>
 
                             <h3 id="chatCounter">
-
                                 0
-
                             </h3>
 
                         </div>
@@ -190,9 +201,7 @@
                             </h6>
 
                             <h3 id="statusMetric">
-
                                 🟢 Operativo
-
                             </h3>
 
                         </div>
@@ -208,10 +217,80 @@
                             </h6>
 
                             <h3 id="salesMetric">
-
                                 $0
-
                             </h3>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+            <!-- GRÁFICOS -->
+
+            <section
+                id="executiveCharts"
+                class="mt-4">
+
+                <div class="row g-4">
+
+                    <div class="col-lg-6">
+
+                        <div class="card dashboard-card">
+
+                            <div class="card-header">
+
+                                📈 Ventas por Sucursal
+
+                            </div>
+
+                            <div class="card-body">
+
+                                <canvas id="salesChart"></canvas>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-lg-6">
+
+                        <div class="card dashboard-card">
+
+                            <div class="card-header">
+
+                                👥 Clientes por Prioridad
+
+                            </div>
+
+                            <div class="card-body">
+
+                                <canvas id="customerChart"></canvas>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-lg-12">
+
+                        <div class="card dashboard-card">
+
+                            <div class="card-header">
+
+                                📄 Facturación
+
+                            </div>
+
+                            <div class="card-body">
+
+                                <canvas id="invoiceChart"></canvas>
+
+                            </div>
 
                         </div>
 
@@ -245,6 +324,7 @@
 
                         <button
                             id="uploadButton"
+                            type="button"
                             class="btn btn-primary mt-3">
 
                             Analizar Factura
@@ -309,6 +389,7 @@
                             <div class="ai-message">
 
                                 Hola, soy Río Claro AI Assistant.
+                                ¿En qué puedo ayudarte?
 
                             </div>
 
@@ -323,18 +404,19 @@
 
                             <textarea
                                 id="question"
-                                class="form-control"
                                 rows="3"
                                 maxlength="1000"
-                                placeholder="Escribe una consulta..."></textarea>
+                                class="form-control"
+                                placeholder="Escribe una pregunta..."></textarea>
 
                         </div>
 
                         <div
-                            class="mt-3 d-flex gap-2">
+                            class="d-flex gap-2 mt-3">
 
                             <button
                                 id="chatButton"
+                                type="button"
                                 class="btn btn-primary">
 
                                 <i class="bi bi-send"></i>
@@ -344,6 +426,7 @@
 
                             <button
                                 id="speechButton"
+                                type="button"
                                 class="btn btn-success">
 
                                 🎤 Hablar
@@ -364,11 +447,11 @@
                 id="estado"
                 class="mt-4">
 
-                <div class="card">
+                <div class="card dashboard-card">
 
                     <div class="card-header">
 
-                        Estado Servicios
+                        Estado de Servicios
 
                     </div>
 
@@ -432,7 +515,7 @@
                 id="clientes"
                 class="mt-4">
 
-                <div class="card">
+                <div class="card dashboard-card">
 
                     <div class="card-header">
 
@@ -444,8 +527,7 @@
 
                         Casos abiertos:
 
-                        <strong
-                            id="pendingCustomers">
+                        <strong id="pendingCustomers">
 
                             0
 
@@ -463,7 +545,7 @@
                 id="finanzas"
                 class="mt-4">
 
-                <div class="card">
+                <div class="card dashboard-card">
 
                     <div class="card-header">
 
@@ -473,8 +555,7 @@
 
                     <div class="card-body">
 
-                        Evaluación de riesgo
-                        mediante GPT‑5.4‑mini.
+                        Evaluación automática de riesgo financiero.
 
                     </div>
 
@@ -488,7 +569,7 @@
                 id="reportes"
                 class="mt-4">
 
-                <div class="card">
+                <div class="card dashboard-card">
 
                     <div class="card-header">
 
@@ -498,14 +579,11 @@
 
                     <div class="card-body">
 
-                        Ventas:
-
-                        <span
-                            id="salesMetricReport">
+                        <h3 id="salesMetricReport">
 
                             $0
 
-                        </span>
+                        </h3>
 
                     </div>
 
@@ -519,7 +597,7 @@
                 id="admin"
                 class="mt-4">
 
-                <div class="card">
+                <div class="card dashboard-card">
 
                     <div class="card-header">
 
@@ -529,8 +607,7 @@
 
                     <div class="card-body">
 
-                        Estado operativo
-                        y monitoreo.
+                        Estado general del sistema.
 
                     </div>
 
@@ -542,7 +619,17 @@
 
     </main>
 
-    <script src="/static/js/app.js"></script>
+    <!-- CHARTJS -->
+
+    https://cdn.jsdelivr.net/npm/chart.js    </script>
+
+    <!-- APP -->
+
+    <script
+        src="/static/js/app.js">
+    </script>
+
+    <!-- BOOTSTRAP -->
 
     <script
         src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">

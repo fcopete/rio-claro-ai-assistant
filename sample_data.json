@@ -1,0 +1,86 @@
+{
+  "dashboard": {
+    "azure_openai": "Disponible",
+    "facturas_procesadas": 152,
+    "consultas_ia": 356,
+    "estado": "Operativo",
+    "ventas_totales": 654940
+  },
+  "executive_summary": {
+    "success": true,
+    "month": "Octubre 2026",
+    "branches": [
+      {
+        "branch": "Monterrey",
+        "sales": 154220
+      },
+      {
+        "branch": "León",
+        "sales": 128940
+      },
+      {
+        "branch": "CDMX",
+        "sales": 199330
+      },
+      {
+        "branch": "Guadalajara",
+        "sales": 172450
+      },
+      {
+        "branch": "Querétaro",
+        "sales": 118995
+      },
+      {
+        "branch": "Puebla",
+        "sales": 133420
+      }
+    ],
+    "total_sales": 907355,
+    "average_ticket": 3580.4,
+    "orders": 253
+  },
+  "customers": {
+    "success": true,
+    "pending_cases": 42,
+    "customers": [
+      {
+        "client": "Hotel Plaza Central",
+        "days_without_followup": 8,
+        "priority": "Alta"
+      },
+      {
+        "client": "Corporativo Jiménez",
+        "days_without_followup": 5,
+        "priority": "Media"
+      },
+      {
+        "client": "Restaurantes La Sierra",
+        "days_without_followup": 2,
+        "priority": "Baja"
+      }
+    ]
+  },
+  "warehouse": {
+    "success": true,
+    "inventory": [
+      {
+        "product": "Cloro 1L",
+        "stock": 425
+      },
+      {
+        "product": "Cloro 5L",
+        "stock": 214
+      },
+      {
+        "product": "Detergente Industrial",
+        "stock": 218
+      }
+    ]
+  },
+  "admin_status": {
+    "success": true,
+    "system": "ok",
+    "azure_openai": "ok",
+    "document_ai": "ok"
+  }
+}

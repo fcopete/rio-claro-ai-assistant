@@ -1,3 +1,3 @@
 class SearchService:
-    def search(self, query):
-        return []
+    def __init__(self): self.enabled=False
+    def search(self, query): return []

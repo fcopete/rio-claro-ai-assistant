@@ -6,7 +6,6 @@ invoice_bp=Blueprint("invoice",__name__)
 def upload_invoice():
     file=request.files["file"]
     return jsonify({"success":True,"data":analyze_invoice(file)})
-
 @invoice_bp.route("/analyze",methods=["POST"])
 def ai_analysis():
     payload=request.get_json()
