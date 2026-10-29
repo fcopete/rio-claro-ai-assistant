@@ -1,522 +1,541 @@
-console.log(
-    "Rio Claro app.js cargado"
-);
+const RioClaroApp = {
 
-const API = {
-    HEALTH: "/health",
-    CHAT: "/api/chat/ask",
-    INVOICE: "/api/invoice/upload",
-    INVOICE_ANALYZE: "/api/invoice/analyze",
-    EXECUTIVE_SUMMARY: "/api/executive/sales-summary",
-    CUSTOMER_PENDING: "/api/customer/pending",
-    ADMIN_STATUS: "/api/admin/status"
-};
+    API: {
 
-let chatCounter = 0;
-let invoiceCounter = 0;
+        HEALTH:
+            "/health",
 
-let conversationHistory = [];
+        CHAT:
+            "/api/chat/ask",
 
-document.addEventListener(
-    "DOMContentLoaded",
-    initialize
-);
+        INVOICE:
+            "/api/invoice/upload",
 
-function initialize() {
+        INVOICE_ANALYZE:
+            "/api/invoice/analyze",
 
-    bindEvents();
+        EXECUTIVE_SUMMARY:
+            "/api/executive/sales-summary",
 
-    checkHealth();
+        CUSTOMER_PENDING:
+            "/api/customer/pending",
 
-    loadExecutiveSummary();
+        ADMIN_STATUS:
+            "/api/admin/status"
+    },
 
-    loadCustomerMetrics();
-}
+    MAX_HISTORY: 20,
 
-function bindEvents() {
+    chatCounter: 0,
 
-    document
-        .getElementById("chatButton")
-        ?.addEventListener(
-            "click",
-            sendQuestion
+    invoiceCounter: 0,
+
+    conversationHistory: [],
+
+    initialize() {
+
+        console.log(
+            "Rio Claro AI Assistant iniciado"
         );
 
-    document
-        .getElementById("uploadButton")
-        ?.addEventListener(
-            "click",
-            uploadInvoice
-        );
+        this.bindEvents();
 
-    document
-        .getElementById("speechButton")
-        ?.addEventListener(
-            "click",
-            startSpeech
-        );
+        this.checkHealth();
 
-    document
-        .getElementById("question")
-        ?.addEventListener(
-            "keydown",
-            handleEnter
-        );
-}
+        this.loadExecutiveSummary();
 
-function handleEnter(event) {
+        this.loadCustomerMetrics();
 
-    if (
-        event.key === "Enter" &&
-        !event.shiftKey
-    ) {
+        this.loadAdminStatus();
+    },
 
-        event.preventDefault();
+    bindEvents() {
 
-        sendQuestion();
-    }
-}
-
-async function checkHealth() {
-
-    try {
-
-        const response =
-            await fetch(
-                API.HEALTH
+        document
+            .getElementById("chatButton")
+            ?.addEventListener(
+                "click",
+                () => this.sendQuestion()
             );
 
-        if (!response.ok) {
+        document
+            .getElementById("uploadButton")
+            ?.addEventListener(
+                "click",
+                () => this.uploadInvoice()
+            );
 
-            throw new Error(
-                `HTTP ${response.status}`
+        document
+            .getElementById("speechButton")
+            ?.addEventListener(
+                "click",
+                () => this.startSpeech()
+            );
+
+        document
+            .getElementById("question")
+            ?.addEventListener(
+                "keydown",
+                e => {
+
+                    if (
+                        e.key === "Enter" &&
+                        !e.shiftKey
+                    ) {
+
+                        e.preventDefault();
+
+                        this.sendQuestion();
+                    }
+                }
+            );
+    },
+
+    async checkHealth() {
+
+        try {
+
+            const response =
+                await fetch(
+                    this.API.HEALTH
+                );
+
+            const data =
+                await response.json();
+
+            this.updateStatus(
+                response.ok &&
+                data.status ===
+                "healthy"
+            );
+
+        } catch {
+
+            this.updateStatus(
+                false
             );
         }
+    },
 
-        const data =
-            await response.json();
+    updateStatus(
+        healthy
+    ) {
 
-        updateStatus(
-            data.status === "healthy"
+        const values =
+            healthy
+            ? {
+                text:
+                    "🟢 Disponible",
+                status:
+                    "🟢 Operativa",
+                metric:
+                    "🟢 Operativo"
+            }
+            : {
+                text:
+                    "🔴 Error",
+                status:
+                    "🔴 Error",
+                metric:
+                    "🔴 Error"
+            };
+
+        this.setText(
+            "openAIStatus",
+            values.text
         );
 
-    } catch (error) {
-
-        console.error(
-            "Health Check Error:",
-            error
+        this.setText(
+            "docStatus",
+            values.text
         );
 
-        updateStatus(false);
-    }
-}
-
-function updateStatus(
-    healthy
-) {
-
-    const system =
-        document.getElementById(
-            "systemStatus"
+        this.setText(
+            "systemStatus",
+            values.status
         );
 
-    const openAI =
-        document.getElementById(
-            "openAIStatus"
+        this.setText(
+            "statusMetric",
+            values.metric
+        );
+    },
+
+    async sendQuestion() {
+
+        const textarea =
+            document.getElementById(
+                "question"
+            );
+
+        if (!textarea) {
+            return;
+        }
+
+        const question =
+            textarea.value.trim();
+
+        if (!question) {
+
+            this.showMessage(
+                "Ingrese una pregunta",
+                "error"
+            );
+
+            return;
+        }
+
+        this.appendMessage(
+            question,
+            "user"
         );
 
-    const documentAI =
-        document.getElementById(
-            "docStatus"
+        this.conversationHistory.push({
+
+            role: "user",
+
+            content: question
+        });
+
+        textarea.value = "";
+
+        this.toggleLoader(
+            "chatLoader",
+            true
         );
 
-    const metric =
-        document.getElementById(
-            "statusMetric"
-        );
+        try {
 
-    if (healthy) {
+            const response =
+                await fetch(
+                    this.API.CHAT,
+                    {
+                        method: "POST",
 
-        if (system)
-            system.textContent =
-                "🟢 Operativa";
-
-        if (openAI)
-            openAI.textContent =
-                "🟢 Disponible";
-
-        if (documentAI)
-            documentAI.textContent =
-                "🟢 Disponible";
-
-        if (metric)
-            metric.textContent =
-                "🟢 Operativo";
-
-    } else {
-
-        if (system)
-            system.textContent =
-                "🔴 Error";
-
-        if (openAI)
-            openAI.textContent =
-                "🔴 Error";
-
-        if (documentAI)
-            documentAI.textContent =
-                "🔴 Error";
-
-        if (metric)
-            metric.textContent =
-                "🔴 Error";
-    }
-}
-
-async function sendQuestion() {
-
-    const textarea =
-        document.getElementById(
-            "question"
-        );
-
-    if (!textarea) {
-        return;
-    }
-
-    const question =
-        textarea.value.trim();
-
-    if (!question) {
-
-        showMessage(
-            "Ingrese una pregunta.",
-            "error"
-        );
-
-        return;
-    }
-
-    appendMessage(
-        question,
-        "user"
-    );
-
-    conversationHistory.push({
-
-        role: "user",
-
-        content: question
-    });
-
-    textarea.value = "";
-
-    toggleLoader(
-        "chatLoader",
-        true
-    );
-
-    try {
-
-        const response =
-            await fetch(
-                API.CHAT,
-                {
-                    method: "POST",
-
-                    headers: {
-                        "Content-Type":
+                        headers: {
+                            "Content-Type":
                             "application/json"
-                    },
+                        },
 
-                    body:
+                        body:
                         JSON.stringify({
 
                             question,
 
                             history:
-                                conversationHistory
+                            this.conversationHistory
                         })
-                }
-            );
-
-        const data =
-            await response.json();
-
-        if (!response.ok) {
-
-            throw new Error(
-                data.message ||
-                "Error del servidor"
-            );
-        }
-
-        appendMessage(
-            data.answer ||
-            "Sin respuesta.",
-            "assistant"
-        );
-
-        conversationHistory.push({
-
-            role: "assistant",
-
-            content:
-                data.answer
-        });
-
-        chatCounter++;
-
-        const counter =
-            document.getElementById(
-                "chatCounter"
-            );
-
-        if (counter) {
-
-            counter.textContent =
-                chatCounter;
-        }
-
-    } catch (error) {
-
-        console.error(
-            "Chat Error:",
-            error
-        );
-
-        appendMessage(
-            error.message ||
-            "Error al conectar con Azure OpenAI.",
-            "assistant"
-        );
-
-        showMessage(
-            error.message ||
-            "Error en el chat.",
-            "error"
-        );
-
-    } finally {
-
-        toggleLoader(
-            "chatLoader",
-            false
-        );
-    }
-}
-
-async function uploadInvoice() {
-
-    const fileInput =
-        document.getElementById(
-            "invoiceFile"
-        );
-
-    if (
-        !fileInput ||
-        !fileInput.files.length
-    ) {
-
-        showMessage(
-            "Seleccione una factura.",
-            "error"
-        );
-
-        return;
-    }
-
-    const file =
-        fileInput.files[0];
-
-    const maxSize =
-        10 *
-        1024 *
-        1024;
-
-    if (
-        file.size >
-        maxSize
-    ) {
-
-        showMessage(
-            "Archivo superior a 10 MB.",
-            "error"
-        );
-
-        return;
-    }
-
-    const formData =
-        new FormData();
-
-    formData.append(
-        "file",
-        file
-    );
-
-    toggleLoader(
-        "invoiceLoader",
-        true
-    );
-
-    try {
-
-        const response =
-            await fetch(
-                API.INVOICE,
-                {
-                    method: "POST",
-                    body: formData
-                }
-            );
-
-        const data =
-            await response.json();
-
-        if (!response.ok) {
-
-            throw new Error(
-                data.message ||
-                "Error procesando factura."
-            );
-        }
-
-        const output =
-            document.getElementById(
-                "invoiceResult"
-            );
-
-        if (output) {
-
-            output.textContent =
-                JSON.stringify(
-                    data.data,
-                    null,
-                    2
-                );
-        }
-
-        invoiceCounter++;
-
-        document.getElementById(
-            "invoiceCounter"
-        ).textContent =
-            invoiceCounter;
-
-        showMessage(
-            "Factura procesada correctamente.",
-            "success"
-        );
-
-    } catch (error) {
-
-        console.error(
-            "Invoice Error:",
-            error
-        );
-
-        showMessage(
-            error.message,
-            "error"
-        );
-
-    } finally {
-
-        toggleLoader(
-            "invoiceLoader",
-            false
-        );
-    }
-}
-
-async function loadExecutiveSummary() {
-
-    try {
-
-        const response =
-            await fetch(
-                API.EXECUTIVE_SUMMARY
-            );
-
-        const data =
-            await response.json();
-
-        if (
-            data.total_sales
-        ) {
-
-            const metric =
-                document.getElementById(
-                    "salesMetric"
+                    }
                 );
 
-            if (metric) {
+            const data =
+                await response.json();
 
-                metric.textContent =
-                    "$" +
-                    Number(
-                        data.total_sales
-                    ).toLocaleString();
+            if (!response.ok) {
+
+                throw new Error(
+                    data.message ||
+                    "Error IA"
+                );
             }
-        }
 
-    } catch (error) {
-
-        console.error(
-            error
-        );
-    }
-}
-
-async function loadCustomerMetrics() {
-
-    try {
-
-        const response =
-            await fetch(
-                API.CUSTOMER_PENDING
+            this.appendMessage(
+                data.answer,
+                "assistant"
             );
 
-        const data =
-            await response.json();
+            this.conversationHistory.push({
 
-        const pending =
+                role:
+                    "assistant",
+
+                content:
+                    data.answer
+            });
+
+            this.trimHistory();
+
+            this.chatCounter++;
+
+            this.setText(
+                "chatCounter",
+                this.chatCounter
+            );
+
+        } catch (error) {
+
+            this.appendMessage(
+                error.message,
+                "assistant"
+            );
+
+            this.showMessage(
+                error.message,
+                "error"
+            );
+
+        } finally {
+
+            this.toggleLoader(
+                "chatLoader",
+                false
+            );
+        }
+    },
+
+    async uploadInvoice() {
+
+        const input =
             document.getElementById(
-                "pendingCustomers"
+                "invoiceFile"
             );
 
         if (
-            pending &&
-            data.pending_cases
+            !input ||
+            !input.files.length
         ) {
 
-            pending.textContent =
-                data.pending_cases;
+            this.showMessage(
+                "Seleccione una factura",
+                "error"
+            );
+
+            return;
         }
 
-    } catch (error) {
+        const formData =
+            new FormData();
 
-        console.error(
-            error
+        formData.append(
+            "file",
+            input.files[0]
         );
-    }
-}
 
-function startSpeech() {
+        this.toggleLoader(
+            "invoiceLoader",
+            true
+        );
 
-    try {
+        try {
+
+            const response =
+                await fetch(
+                    this.API.INVOICE,
+                    {
+                        method: "POST",
+                        body: formData
+                    }
+                );
+
+            const data =
+                await response.json();
+
+            if (!response.ok) {
+
+                throw new Error(
+                    data.message
+                );
+            }
+
+            const output =
+                document.getElementById(
+                    "invoiceResult"
+                );
+
+            if (output) {
+
+                output.textContent =
+                    JSON.stringify(
+                        data.data,
+                        null,
+                        2
+                    );
+            }
+
+            this.invoiceCounter++;
+
+            this.setText(
+                "invoiceCounter",
+                this.invoiceCounter
+            );
+
+            await this.analyzeInvoiceWithAI(
+                data.data
+            );
+
+        } catch (error) {
+
+            this.showMessage(
+                error.message,
+                "error"
+            );
+
+        } finally {
+
+            this.toggleLoader(
+                "invoiceLoader",
+                false
+            );
+        }
+    },
+
+    async analyzeInvoiceWithAI(
+        invoiceData
+    ) {
+
+        try {
+
+            const response =
+                await fetch(
+                    this.API
+                        .INVOICE_ANALYZE,
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type":
+                            "application/json"
+                        },
+
+                        body:
+                        JSON.stringify({
+                            invoice:
+                            invoiceData
+                        })
+                    }
+                );
+
+            const data =
+                await response.json();
+
+            this.renderInvoiceAnalysis(
+                data.analysis
+            );
+
+        } catch (error) {
+
+            console.error(error);
+        }
+    },
+
+    renderInvoiceAnalysis(
+        text
+    ) {
+
+        const analysis =
+            document.getElementById(
+                "invoiceAnalysis"
+            );
+
+        if (!analysis) {
+            return;
+        }
+
+        analysis.innerHTML = `
+            <div class="analysis-title">
+                Informe IA
+            </div>
+
+            <div class="analysis-section">
+                ${String(text || "")
+                    .replace(/\n/g,"<br>")
+                }
+            </div>
+        `;
+    },
+
+    async loadExecutiveSummary() {
+
+        try {
+
+            const response =
+                await fetch(
+                    this.API
+                        .EXECUTIVE_SUMMARY
+                );
+
+            const data =
+                await response.json();
+
+            const value =
+                "$" +
+                Number(
+                    data.total_sales || 0
+                ).toLocaleString();
+
+            this.setText(
+                "salesMetric",
+                value
+            );
+
+            this.setText(
+                "salesMetricReport",
+                value
+            );
+
+        } catch (error) {
+
+            console.error(error);
+        }
+    },
+
+    async loadCustomerMetrics() {
+
+        try {
+
+            const response =
+                await fetch(
+                    this.API
+                        .CUSTOMER_PENDING
+                );
+
+            const data =
+                await response.json();
+
+            this.setText(
+                "pendingCustomers",
+                data.pending_cases || 0
+            );
+
+        } catch (error) {
+
+            console.error(error);
+        }
+    },
+
+    async loadAdminStatus() {
+
+        try {
+
+            const response =
+                await fetch(
+                    this.API.ADMIN_STATUS
+                );
+
+            const data =
+                await response.json();
+
+            console.log(
+                "Admin Status:",
+                data
+            );
+
+        } catch (error) {
+
+            console.error(error);
+        }
+    },
+
+    startSpeech() {
 
         const SpeechRecognition =
             window.SpeechRecognition ||
             window.webkitSpeechRecognition;
 
-        if (
-            !SpeechRecognition
-        ) {
+        if (!SpeechRecognition) {
 
-            showMessage(
-                "Reconocimiento de voz no disponible.",
+            this.showMessage(
+                "Reconocimiento de voz no disponible",
                 "error"
             );
 
@@ -532,123 +551,149 @@ function startSpeech() {
         recognition.start();
 
         recognition.onresult =
-            function(event) {
+            event => {
 
                 const text =
                     event.results[0][0]
                     .transcript;
 
-                document
-                    .getElementById(
+                const textarea =
+                    document.getElementById(
                         "question"
-                    )
-                    .value =
+                    );
+
+                if (textarea) {
+
+                    textarea.value =
                         text;
+                }
             };
+    },
 
-    } catch (error) {
+    appendMessage(
+        text,
+        type
+    ) {
 
-        console.error(
-            error
-        );
+        const container =
+            document.getElementById(
+                "chatContainer"
+            );
 
-        showMessage(
-            "Error iniciando reconocimiento de voz.",
-            "error"
-        );
-    }
-}
+        if (!container) {
+            return;
+        }
 
-function appendMessage(
-    text,
-    type
-) {
+        const item =
+            document.createElement(
+                "div"
+            );
 
-    const container =
-        document.getElementById(
-            "chatContainer"
-        );
-
-    if (!container) {
-        return;
-    }
-
-    const item =
-        document.createElement(
-            "div"
-        );
-
-    item.className =
-        type === "user"
+        item.className =
+            type === "user"
             ? "user-message"
             : "ai-message";
 
-    item.innerHTML =
-        String(text)
-            .replace(
-                /\n/g,
-                "<br>"
-            );
+        item.innerHTML =
+            String(text)
+                .replace(
+                    /\n/g,
+                    "<br>"
+                );
 
-    container.appendChild(
-        item
-    );
-
-    container.scrollTop =
-        container.scrollHeight;
-}
-
-function toggleLoader(
-    id,
-    visible
-) {
-
-    const loader =
-        document.getElementById(
-            id
+        container.appendChild(
+            item
         );
 
-    if (!loader) {
-        return;
-    }
+        container.scrollTop =
+            container.scrollHeight;
+    },
 
-    loader.classList.toggle(
-        "hidden",
-        !visible
-    );
-}
+    toggleLoader(
+        id,
+        visible
+    ) {
 
-function showMessage(
-    message,
-    type = "error"
-) {
+        const loader =
+            document.getElementById(id);
 
-    const box =
-        document.getElementById(
-            "messageBox"
+        if (!loader) {
+            return;
+        }
+
+        loader.classList.toggle(
+            "hidden",
+            !visible
         );
+    },
 
-    if (!box) {
-        return;
-    }
+    showMessage(
+        message,
+        type = "error"
+    ) {
 
-    box.className = type;
-
-    box.textContent =
-        message;
-
-    box.classList.remove(
-        "hidden"
-    );
-
-    setTimeout(
-        () => {
-
-            box.classList.add(
-                "hidden"
+        const box =
+            document.getElementById(
+                "messageBox"
             );
 
-        },
-        5000
-    );
-}
+        if (!box) {
+            return;
+        }
+
+        box.className = type;
+
+        box.textContent =
+            message;
+
+        box.classList.remove(
+            "hidden"
+        );
+
+        setTimeout(
+            () => {
+                box.classList.add(
+                    "hidden"
+                );
+            },
+            5000
+        );
+    },
+
+    setText(
+        id,
+        value
+    ) {
+
+        const element =
+            document.getElementById(
+                id
+            );
+
+        if (element) {
+
+            element.textContent =
+                value;
+        }
+    },
+
+    trimHistory() {
+
+        if (
+            this.conversationHistory.length >
+            this.MAX_HISTORY
+        ) {
+
+            this.conversationHistory =
+                this.conversationHistory.slice(
+                    -this.MAX_HISTORY
+                );
+        }
+    }
+};
+
+document.addEventListener(
+    "DOMContentLoaded",
+    () =>
+        RioClaroApp.initialize()
+);

@@ -1,9 +1,25 @@
-from flask import Flask, render_template
+from flask import (
+    Flask,
+    render_template
+)
 
-from routes.chat_routes import chat_bp
-from routes.invoice_routes import invoice_bp
-from routes.project_routes import project_bp
-from routes.errors import register_handlers
+from config import (
+    AZURE_OPENAI_DEPLOYMENT
+)
+
+# Blueprints
+
+from routes.chat_routes import (
+    chat_bp
+)
+
+from routes.invoice_routes import (
+    invoice_bp
+)
+
+from routes.project_routes import (
+    project_bp
+)
 
 from routes.executive_routes import (
     executive_bp
@@ -17,23 +33,8 @@ from routes.admin_routes import (
     admin_bp
 )
 
-app.register_blueprint(
-    executive_bp,
-    url_prefix="/api/executive"
-)
-
-app.register_blueprint(
-    customer_bp,
-    url_prefix="/api/customer"
-)
-
-app.register_blueprint(
-    admin_bp,
-    url_prefix="/api/admin"
-)
-
-from config import (
-    AZURE_OPENAI_DEPLOYMENT
+from routes.errors import (
+    register_handlers
 )
 
 
@@ -45,9 +46,9 @@ def create_app():
         static_folder="static"
     )
 
-    app.config["MAX_CONTENT_LENGTH"] = (
-        10 * 1024 * 1024
-    )
+    app.config[
+        "MAX_CONTENT_LENGTH"
+    ] = 10 * 1024 * 1024
 
     @app.route("/")
     def home():
@@ -60,12 +61,24 @@ def create_app():
     def health():
 
         return {
-            "status": "healthy",
+
+            "status":
+                "healthy",
+
             "application":
                 "Rio Claro AI Assistant",
+
             "deployment":
-                AZURE_OPENAI_DEPLOYMENT
+                AZURE_OPENAI_DEPLOYMENT,
+
+            "provider":
+                "Azure OpenAI"
+
         }, 200
+
+    # -------------------------
+    # API REGISTRATION
+    # -------------------------
 
     app.register_blueprint(
         chat_bp,
@@ -82,7 +95,28 @@ def create_app():
         url_prefix="/api/project"
     )
 
-    register_handlers(app)
+    app.register_blueprint(
+        executive_bp,
+        url_prefix="/api/executive"
+    )
+
+    app.register_blueprint(
+        customer_bp,
+        url_prefix="/api/customer"
+    )
+
+    app.register_blueprint(
+        admin_bp,
+        url_prefix="/api/admin"
+    )
+
+    # -------------------------
+    # ERROR HANDLERS
+    # -------------------------
+
+    register_handlers(
+        app
+    )
 
     return app
 
@@ -92,7 +126,10 @@ app = create_app()
 if __name__ == "__main__":
 
     app.run(
+
         host="0.0.0.0",
+
         port=5000,
+
         debug=True
     )

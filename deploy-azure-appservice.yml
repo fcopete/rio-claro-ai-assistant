@@ -1,0 +1,4 @@
+name: Deploy Rio Claro AI Assistant
+on:
+  push:
+    branches: [main]

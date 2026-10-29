@@ -2,6 +2,7 @@
 <html lang="es">
 
 <head>
+
     <meta charset="UTF-8">
 
     <meta
@@ -12,27 +13,17 @@
         name="description"
         content="Río Claro AI Assistant">
 
-    <meta
-        name="theme-color"
-        content="#0078D4">
-
     <title>
         Río Claro AI Assistant
     </title>
-
-    <!-- Bootstrap CSS -->
 
     <link
         rel="stylesheet"
         href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
 
-    <!-- Bootstrap Icons -->
-
     <link
         rel="stylesheet"
         href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-
-    <!-- CSS -->
 
     <link
         rel="stylesheet"
@@ -127,9 +118,7 @@
 
             <div
                 id="messageBox"
-                class="hidden"
-                role="alert"
-                aria-live="polite">
+                class="hidden">
             </div>
 
             <!-- DASHBOARD -->
@@ -138,7 +127,7 @@
 
                 <div class="row g-4">
 
-                    <div class="col-lg-3 col-md-6">
+                    <div class="col-lg-3">
 
                         <div class="metric-card">
 
@@ -147,14 +136,16 @@
                             </h6>
 
                             <h3 id="openAIStatus">
+
                                 🟢 Disponible
+
                             </h3>
 
                         </div>
 
                     </div>
 
-                    <div class="col-lg-3 col-md-6">
+                    <div class="col-lg-3">
 
                         <div class="metric-card">
 
@@ -163,14 +154,16 @@
                             </h6>
 
                             <h3 id="invoiceCounter">
+
                                 0
+
                             </h3>
 
                         </div>
 
                     </div>
 
-                    <div class="col-lg-3 col-md-6">
+                    <div class="col-lg-3">
 
                         <div class="metric-card">
 
@@ -179,14 +172,16 @@
                             </h6>
 
                             <h3 id="chatCounter">
+
                                 0
+
                             </h3>
 
                         </div>
 
                     </div>
 
-                    <div class="col-lg-3 col-md-6">
+                    <div class="col-lg-3">
 
                         <div class="metric-card">
 
@@ -195,14 +190,16 @@
                             </h6>
 
                             <h3 id="statusMetric">
+
                                 🟢 Operativo
+
                             </h3>
 
                         </div>
 
                     </div>
 
-                    <div class="col-lg-3 col-md-6">
+                    <div class="col-lg-3">
 
                         <div class="metric-card">
 
@@ -211,7 +208,9 @@
                             </h6>
 
                             <h3 id="salesMetric">
+
                                 $0
+
                             </h3>
 
                         </div>
@@ -222,133 +221,142 @@
 
             </section>
 
-            <!-- FACTURAS Y CHAT -->
+            <!-- FACTURAS -->
 
-            <div class="row g-4 mt-2">
+            <section
+                id="facturas"
+                class="mt-4">
 
-                <!-- FACTURAS -->
+                <div class="card dashboard-card">
 
-                <div class="col-lg-4">
+                    <div class="card-header">
 
-                    <section
-                        id="facturas"
-                        class="card dashboard-card">
+                        📄 Procesamiento de Facturas
 
-                        <div class="card-header">
+                    </div>
 
-                            📄 Procesamiento de Facturas
+                    <div class="card-body">
+
+                        <input
+                            id="invoiceFile"
+                            type="file"
+                            class="form-control"
+                            accept=".pdf,.png,.jpg,.jpeg">
+
+                        <button
+                            id="uploadButton"
+                            class="btn btn-primary mt-3">
+
+                            Analizar Factura
+
+                        </button>
+
+                        <div
+                            id="invoiceLoader"
+                            class="loader hidden">
+                        </div>
+
+                        <hr>
+
+                        <pre
+                            id="invoiceResult"
+                            class="result-output"></pre>
+
+                        <hr>
+
+                        <h6>
+                            Informe IA
+                        </h6>
+
+                        <div
+                            id="invoiceAnalysis"
+                            class="invoice-analysis-card">
+
+                            <div class="analysis-placeholder">
+
+                                Esperando análisis IA...
+
+                            </div>
 
                         </div>
 
-                        <div class="card-body">
+                    </div>
 
-                            <input
-                                id="invoiceFile"
-                                type="file"
+                </div>
+
+            </section>
+
+            <!-- CHAT -->
+
+            <section
+                id="chat"
+                class="mt-4">
+
+                <div class="card dashboard-card">
+
+                    <div class="card-header">
+
+                        🤖 Asistente Inteligente
+
+                    </div>
+
+                    <div class="card-body">
+
+                        <div
+                            id="chatContainer"
+                            class="chat-box">
+
+                            <div class="ai-message">
+
+                                Hola, soy Río Claro AI Assistant.
+
+                            </div>
+
+                        </div>
+
+                        <div
+                            id="chatLoader"
+                            class="loader hidden">
+                        </div>
+
+                        <div class="mt-3">
+
+                            <textarea
+                                id="question"
                                 class="form-control"
-                                accept=".pdf,.png,.jpg,.jpeg">
+                                rows="3"
+                                maxlength="1000"
+                                placeholder="Escribe una consulta..."></textarea>
+
+                        </div>
+
+                        <div
+                            class="mt-3 d-flex gap-2">
 
                             <button
-                                id="uploadButton"
-                                type="button"
-                                class="btn btn-primary w-100 mt-3">
+                                id="chatButton"
+                                class="btn btn-primary">
 
-                                Analizar Factura
+                                <i class="bi bi-send"></i>
+                                Enviar
 
                             </button>
 
-                            <div
-                                id="invoiceLoader"
-                                class="loader hidden">
-                            </div>
+                            <button
+                                id="speechButton"
+                                class="btn btn-success">
 
-                            <hr>
+                                🎤 Hablar
 
-                            <pre
-                                id="invoiceResult"
-                                class="result-output"></pre>
+                            </button>
 
                         </div>
 
-                    </section>
+                    </div>
 
                 </div>
 
-                <!-- CHAT -->
-
-                <div class="col-lg-8">
-
-                    <section
-                        id="chat"
-                        class="card dashboard-card">
-
-                        <div class="card-header">
-
-                            🤖 Asistente Inteligente
-
-                        </div>
-
-                        <div class="card-body">
-
-                            <div
-                                id="chatContainer"
-                                class="chat-box">
-
-                                <div class="ai-message">
-
-                                    Hola, soy Río Claro AI Assistant.
-                                    ¿En qué puedo ayudarte?
-
-                                </div>
-
-                            </div>
-
-                            <div
-                                id="chatLoader"
-                                class="loader hidden">
-                            </div>
-
-                            <div class="mt-3">
-
-                                <textarea
-                                    id="question"
-                                    class="form-control"
-                                    rows="3"
-                                    maxlength="1000"
-                                    placeholder="Escribe una pregunta..."></textarea>
-
-                            </div>
-
-                            <div class="mt-3 d-flex gap-2">
-
-                                <button
-                                    id="chatButton"
-                                    type="button"
-                                    class="btn btn-primary">
-
-                                    <i class="bi bi-send"></i>
-                                    Enviar
-
-                                </button>
-
-                                <button
-                                    id="speechButton"
-                                    type="button"
-                                    class="btn btn-success">
-
-                                    🎤 Hablar
-
-                                </button>
-
-                            </div>
-
-                        </div>
-
-                    </section>
-
-                </div>
-
-            </div>
+            </section>
 
             <!-- ESTADO -->
 
@@ -356,11 +364,11 @@
                 id="estado"
                 class="mt-4">
 
-                <div class="card dashboard-card">
+                <div class="card">
 
                     <div class="card-header">
 
-                        Estado de Servicios
+                        Estado Servicios
 
                     </div>
 
@@ -424,17 +432,17 @@
                 id="clientes"
                 class="mt-4">
 
-                <div class="card dashboard-card">
+                <div class="card">
 
                     <div class="card-header">
 
-                        Clientes
+                        Clientes Pendientes
 
                     </div>
 
                     <div class="card-body">
 
-                        Casos pendientes:
+                        Casos abiertos:
 
                         <strong
                             id="pendingCustomers">
@@ -455,7 +463,7 @@
                 id="finanzas"
                 class="mt-4">
 
-                <div class="card dashboard-card">
+                <div class="card">
 
                     <div class="card-header">
 
@@ -465,8 +473,8 @@
 
                     <div class="card-body">
 
-                        Evaluación inteligente de
-                        facturas utilizando GPT‑5.4‑mini.
+                        Evaluación de riesgo
+                        mediante GPT‑5.4‑mini.
 
                     </div>
 
@@ -480,7 +488,7 @@
                 id="reportes"
                 class="mt-4">
 
-                <div class="card dashboard-card">
+                <div class="card">
 
                     <div class="card-header">
 
@@ -490,14 +498,14 @@
 
                     <div class="card-body">
 
-                        Ventas Consolidadas:
+                        Ventas:
 
-                        <h4
+                        <span
                             id="salesMetricReport">
 
                             $0
 
-                        </h4>
+                        </span>
 
                     </div>
 
@@ -511,7 +519,7 @@
                 id="admin"
                 class="mt-4">
 
-                <div class="card dashboard-card">
+                <div class="card">
 
                     <div class="card-header">
 
@@ -521,9 +529,8 @@
 
                     <div class="card-body">
 
-                        Monitoreo del sistema,
-                        conectividad Azure y
-                        estado de servicios.
+                        Estado operativo
+                        y monitoreo.
 
                     </div>
 
@@ -535,11 +542,7 @@
 
     </main>
 
-    <!-- APP JS -->
-
     <script src="/static/js/app.js"></script>
-
-    <!-- BOOTSTRAP JS -->
 
     <script
         src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">

@@ -1,11 +1,5 @@
-from flask import Blueprint
-
-admin_bp = Blueprint("admin", __name__)
-
+from flask import Blueprint,jsonify
+admin_bp=Blueprint("admin",__name__)
 @admin_bp.route("/status")
 def status():
-    return {
-        "system": "ok",
-        "azure_openai": "ok",
-        "document_ai": "ok"
-    }
+    return jsonify({"success":True,"system":"ok"})

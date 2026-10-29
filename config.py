@@ -1,6 +1,8 @@
 import os
 
-from dotenv import load_dotenv
+from dotenv import (
+    load_dotenv
+)
 
 load_dotenv()
 
@@ -22,6 +24,10 @@ def get_required_env(
 
     return value
 
+
+# ======================================
+# AZURE OPENAI
+# ======================================
 
 AZURE_OPENAI_ENDPOINT = (
     get_required_env(
@@ -48,6 +54,10 @@ AZURE_OPENAI_DEPLOYMENT = (
     )
 )
 
+# ======================================
+# DOCUMENT INTELLIGENCE
+# ======================================
+
 DOCUMENT_INTELLIGENCE_ENDPOINT = (
     get_required_env(
         "DOCUMENT_INTELLIGENCE_ENDPOINT"
@@ -59,3 +69,16 @@ DOCUMENT_INTELLIGENCE_KEY = (
         "DOCUMENT_INTELLIGENCE_KEY"
     )
 )
+
+# ======================================
+# GENERAL APP SETTINGS
+# ======================================
+
+MAX_UPLOAD_SIZE_MB = 10
+
+ALLOWED_EXTENSIONS = {
+    "pdf",
+    "png",
+    "jpg",
+    "jpeg"
+}

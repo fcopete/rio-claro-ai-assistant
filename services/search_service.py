@@ -1,7 +1,3 @@
 class SearchService:
-
-    def search(
-        self,
-        query
-    ):
+    def search(self, query):
         return []
