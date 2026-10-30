@@ -4,22 +4,19 @@ from dotenv import (
     load_dotenv
 )
 
-# ==================================================
-# LOAD ENVIRONMENT VARIABLES
-# ==================================================
+# ==========================================
+# LOAD ENV
+# ==========================================
 
 load_dotenv()
 
-# ==================================================
+# ==========================================
 # HELPERS
-# ==================================================
+# ==========================================
 
 def get_required_env(
     variable_name
 ):
-    """
-    Retorna una variable obligatoria.
-    """
 
     value = os.getenv(
         variable_name
@@ -28,8 +25,8 @@ def get_required_env(
     if not value:
 
         raise ValueError(
-            f"Missing required environment "
-            f"variable: {variable_name}"
+            f"Missing required environment variable: "
+            f"{variable_name}"
         )
 
     return value
@@ -39,26 +36,28 @@ def get_optional_env(
     variable_name,
     default_value=None
 ):
-    """
-    Retorna una variable opcional.
-    """
 
     return os.getenv(
         variable_name,
         default_value
     )
 
-
-# ==================================================
-# APP
-# ==================================================
+# ==========================================
+# APPLICATION
+# ==========================================
 
 APP_NAME = (
-    "Rio Claro AI Assistant"
+    get_optional_env(
+        "APP_NAME",
+        "Rio Claro AI Assistant"
+    )
 )
 
 APP_VERSION = (
-    "1.0.0"
+    get_optional_env(
+        "APP_VERSION",
+        "1.0.0"
+    )
 )
 
 SECRET_KEY = (
@@ -83,11 +82,16 @@ FLASK_DEBUG = (
     == "true"
 )
 
-# ==================================================
-# UPLOADS
-# ==================================================
+# ==========================================
+# FILES
+# ==========================================
 
-MAX_UPLOAD_SIZE_MB = 10
+MAX_UPLOAD_SIZE_MB = int(
+    get_optional_env(
+        "MAX_UPLOAD_SIZE_MB",
+        10
+    )
+)
 
 MAX_CONTENT_LENGTH = (
     MAX_UPLOAD_SIZE_MB
@@ -106,9 +110,9 @@ ALLOWED_EXTENSIONS = {
     "jpeg"
 }
 
-# ==================================================
+# ==========================================
 # AZURE OPENAI
-# ==================================================
+# ==========================================
 
 AZURE_OPENAI_ENDPOINT = (
     get_required_env(
@@ -135,9 +139,9 @@ AZURE_OPENAI_DEPLOYMENT = (
     )
 )
 
-# ==================================================
+# ==========================================
 # DOCUMENT INTELLIGENCE
-# ==================================================
+# ==========================================
 
 DOCUMENT_INTELLIGENCE_ENDPOINT = (
     get_required_env(
@@ -151,77 +155,152 @@ DOCUMENT_INTELLIGENCE_KEY = (
     )
 )
 
-# ==================================================
-# CHAT SETTINGS
-# ==================================================
+# ==========================================
+# CHAT CONFIG
+# ==========================================
 
-MAX_CHAT_HISTORY = 20
+MAX_CHAT_HISTORY = int(
+    get_optional_env(
+        "MAX_CHAT_HISTORY",
+        20
+    )
+)
 
-MAX_CHAT_RESPONSE_TOKENS = 1000
+MAX_CHAT_RESPONSE_TOKENS = int(
+    get_optional_env(
+        "MAX_CHAT_RESPONSE_TOKENS",
+        1000
+    )
+)
 
-CHAT_TEMPERATURE = 0.3
+CHAT_TEMPERATURE = float(
+    get_optional_env(
+        "CHAT_TEMPERATURE",
+        0.3
+    )
+)
 
-# ==================================================
+# ==========================================
 # SAMPLE DATA
-# ==================================================
+# ==========================================
 
-SAMPLE_DATA_FILE = os.path.join(
-
-    "data",
-
-    "sample_data.json"
+SAMPLE_DATA_FILE = (
+    get_optional_env(
+        "SAMPLE_DATA_FILE",
+        "data/sample_data.json"
+    )
 )
 
-# ==================================================
-# SYSTEM
-# ==================================================
+# ==========================================
+# EXECUTIVE DASHBOARD
+# ==========================================
 
-HEALTH_STATUS_OK = (
-    "healthy"
+DEFAULT_BRANCHES = (
+    get_optional_env(
+        "DEFAULT_BRANCHES",
+        "Monterrey,León,CDMX,Guadalajara,Querétaro,Puebla"
+    )
+).split(",")
+
+# ==========================================
+# FINANCE
+# ==========================================
+
+HIGH_RISK_THRESHOLD = int(
+    get_optional_env(
+        "HIGH_RISK_THRESHOLD",
+        100000
+    )
 )
 
-HEALTH_STATUS_ERROR = (
-    "error"
+MEDIUM_RISK_THRESHOLD = int(
+    get_optional_env(
+        "MEDIUM_RISK_THRESHOLD",
+        50000
+    )
 )
 
-SYSTEM_PROVIDER = (
-    "Azure OpenAI"
+# ==========================================
+# CUSTOMERS
+# ==========================================
+
+PENDING_CUSTOMER_DAYS = int(
+    get_optional_env(
+        "PENDING_CUSTOMER_DAYS",
+        7
+    )
 )
 
-# ==================================================
+# ==========================================
+# INVENTORY
+# ==========================================
+
+LOW_STOCK_THRESHOLD = int(
+    get_optional_env(
+        "LOW_STOCK_THRESHOLD",
+        50
+    )
+)
+
+# ==========================================
+# FEATURES
+# ==========================================
+
+ENABLE_SPEECH_RECOGNITION = (
+    get_optional_env(
+        "ENABLE_SPEECH_RECOGNITION",
+        "true"
+    ).lower()
+    == "true"
+)
+
+ENABLE_SAMPLE_DATA = (
+    get_optional_env(
+        "ENABLE_SAMPLE_DATA",
+        "true"
+    ).lower()
+    == "true"
+)
+
+ENABLE_INVOICE_AI_ANALYSIS = (
+    get_optional_env(
+        "ENABLE_INVOICE_AI_ANALYSIS",
+        "true"
+    ).lower()
+    == "true"
+)
+
+ENABLE_EXECUTIVE_DASHBOARD = (
+    get_optional_env(
+        "ENABLE_EXECUTIVE_DASHBOARD",
+        "true"
+    ).lower()
+    == "true"
+)
+
+# ==========================================
 # ROLES
-# ==================================================
+# ==========================================
 
-ROLE_DIRECTOR = (
-    "director"
-)
+ROLE_DIRECTOR = "director"
+ROLE_FINANCE = "finance"
+ROLE_MANAGER = "manager"
+ROLE_WAREHOUSE = "warehouse"
+ROLE_ADMIN = "admin"
 
-ROLE_FINANCE = (
-    "finance"
-)
-
-ROLE_MANAGER = (
-    "manager"
-)
-
-ROLE_WAREHOUSE = (
-    "warehouse"
-)
-
-ROLE_ADMIN = (
-    "admin"
-)
-
-# ==================================================
-# USERS
-# ==================================================
+# ==========================================
+# LOGIN USERS
+# ==========================================
 
 DEMO_USERS = {
 
     "DIRGEN": {
 
         "password":
-            "D1rG3n.2018",
+            get_optional_env(
+                "DIRGEN_PASSWORD",
+                "D1rG3n.2018"
+            ),
 
         "role":
             ROLE_DIRECTOR
@@ -230,7 +309,10 @@ DEMO_USERS = {
     "COBRANZA": {
 
         "password":
-            "C0BR4.2018",
+            get_optional_env(
+                "COBRANZA_PASSWORD",
+                "C0BR4.2018"
+            ),
 
         "role":
             ROLE_FINANCE
@@ -239,7 +321,10 @@ DEMO_USERS = {
     "GERENCIA": {
 
         "password":
-            "G3r3n.2018",
+            get_optional_env(
+                "GERENCIA_PASSWORD",
+                "G3r3n.2018"
+            ),
 
         "role":
             ROLE_MANAGER
@@ -248,7 +333,10 @@ DEMO_USERS = {
     "BODEGA": {
 
         "password":
-            "B0D3.2018",
+            get_optional_env(
+                "BODEGA_PASSWORD",
+                "B0D3.2018"
+            ),
 
         "role":
             ROLE_WAREHOUSE
@@ -257,36 +345,12 @@ DEMO_USERS = {
     "SISTEMAS": {
 
         "password":
-            "S1st.2018",
+            get_optional_env(
+                "SISTEMAS_PASSWORD",
+                "S1st.2018"
+            ),
 
         "role":
             ROLE_ADMIN
     }
 }
-
-# ==================================================
-# EXECUTIVE DASHBOARD
-# ==================================================
-
-DEFAULT_BRANCHES = [
-
-    "Monterrey",
-
-    "León",
-
-    "CDMX",
-
-    "Guadalajara",
-
-    "Querétaro",
-
-    "Puebla"
-]
-
-# ==================================================
-# FINANCIAL SETTINGS
-# ==================================================
-
-HIGH_RISK_THRESHOLD = 100000
-
-MEDIUM_RISK_THRESHOLD = 50000

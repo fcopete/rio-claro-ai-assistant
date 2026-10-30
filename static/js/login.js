@@ -1,3 +1,11 @@
+console.log(
+    "LOGIN JS CARGADO"
+);
+
+/* ==========================================
+   INIT
+========================================== */
+
 document.addEventListener(
     "DOMContentLoaded",
     initializeLogin
@@ -7,32 +15,67 @@ function initializeLogin() {
 
     checkExistingSession();
 
-    document
-        .getElementById(
+    const loginButton =
+        document.getElementById(
             "loginButton"
-        )
-        ?.addEventListener(
+        );
+
+    const usernameInput =
+        document.getElementById(
+            "username"
+        );
+
+    const passwordInput =
+        document.getElementById(
+            "password"
+        );
+
+    if (loginButton) {
+
+        loginButton.addEventListener(
             "click",
             login
         );
+    }
 
-    document
-        .getElementById(
-            "password"
-        )
-        ?.addEventListener(
+    if (usernameInput) {
+
+        usernameInput.addEventListener(
             "keydown",
-            function (event) {
-
-                if (
-                    event.key === "Enter"
-                ) {
-
-                    login();
-                }
-            }
+            handleEnter
         );
+    }
+
+    if (passwordInput) {
+
+        passwordInput.addEventListener(
+            "keydown",
+            handleEnter
+        );
+    }
 }
+
+/* ==========================================
+   ENTER KEY
+========================================== */
+
+function handleEnter(
+    event
+) {
+
+    if (
+        event.key === "Enter"
+    ) {
+
+        event.preventDefault();
+
+        login();
+    }
+}
+
+/* ==========================================
+   LOGIN
+========================================== */
 
 async function login() {
 
@@ -41,16 +84,19 @@ async function login() {
             .getElementById(
                 "username"
             )
-            .value
-            .trim();
+            ?.value
+            .trim()
+            .toUpperCase();
 
     const password =
         document
             .getElementById(
                 "password"
             )
-            .value
+            ?.value
             .trim();
+
+    hideLoginError();
 
     if (!username) {
 
@@ -93,20 +139,36 @@ async function login() {
                 }
             );
 
-        const data =
-            await response.json();
+        let data;
+
+        try {
+
+            data =
+                await response.json();
+
+        } catch {
+
+            throw new Error(
+                "La respuesta del servidor no es válida."
+            );
+        }
 
         if (!response.ok) {
 
             throw new Error(
                 data.message ||
-                "Credenciales inválidas"
+                "Credenciales inválidas."
             );
         }
 
         localStorage.setItem(
+            "authenticated",
+            "true"
+        );
+
+        localStorage.setItem(
             "user",
-            username
+            data.user
         );
 
         localStorage.setItem(
@@ -114,18 +176,13 @@ async function login() {
             data.role
         );
 
-        localStorage.setItem(
-            "authenticated",
-            "true"
-        );
-
         window.location.href =
             "/";
-    }
 
-    catch (error) {
+    } catch (error) {
 
         console.error(
+            "LOGIN ERROR:",
             error
         );
 
@@ -135,26 +192,9 @@ async function login() {
     }
 }
 
-function showLoginError(
-    message
-) {
-
-    const box =
-        document.getElementById(
-            "loginMessage"
-        );
-
-    if (!box) {
-        return;
-    }
-
-    box.textContent =
-        message;
-
-    box.classList.remove(
-        "d-none"
-    );
-}
+/* ==========================================
+   VERIFY ACTIVE SESSION
+========================================== */
 
 async function checkExistingSession() {
 
@@ -166,6 +206,7 @@ async function checkExistingSession() {
             );
 
         if (!response.ok) {
+
             return;
         }
 
@@ -173,12 +214,13 @@ async function checkExistingSession() {
             await response.json();
 
         if (
+            data.authenticated &&
             data.role
         ) {
 
             localStorage.setItem(
-                "role",
-                data.role
+                "authenticated",
+                "true"
             );
 
             localStorage.setItem(
@@ -187,20 +229,26 @@ async function checkExistingSession() {
             );
 
             localStorage.setItem(
-                "authenticated",
-                "true"
+                "role",
+                data.role
             );
 
             window.location.href =
                 "/";
         }
-    }
 
-    catch {
+    } catch (error) {
 
-        // no hacer nada
+        console.error(
+            "SESSION CHECK ERROR:",
+            error
+        );
     }
 }
+
+/* ==========================================
+   LOGOUT
+========================================== */
 
 async function logout() {
 
@@ -213,13 +261,15 @@ async function logout() {
             }
         );
 
-    } catch {
+    } catch (error) {
 
-        // ignorar errores
+        console.error(
+            error
+        );
     }
 
     localStorage.removeItem(
-        "role"
+        "authenticated"
     );
 
     localStorage.removeItem(
@@ -227,9 +277,52 @@ async function logout() {
     );
 
     localStorage.removeItem(
-        "authenticated"
+        "role"
     );
 
     window.location.href =
         "/login";
+}
+
+/* ==========================================
+   UI
+========================================== */
+
+function showLoginError(
+    message
+) {
+
+    const container =
+        document.getElementById(
+            "loginMessage"
+        );
+
+    if (!container) {
+        return;
+    }
+
+    container.textContent =
+        message;
+
+    container.classList.remove(
+        "d-none"
+    );
+}
+
+function hideLoginError() {
+
+    const container =
+        document.getElementById(
+            "loginMessage"
+        );
+
+    if (!container) {
+        return;
+    }
+
+    container.textContent = "";
+
+    container.classList.add(
+        "d-none"
+    );
 }
