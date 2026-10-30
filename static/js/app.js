@@ -58,9 +58,12 @@ const RioClaroApp = {
 
     initialize() {
 
-        console.log(
-            "Rio Claro AI Assistant iniciado"
-        );
+        if (
+            !this.checkAuthentication()
+        ) {
+
+            return;
+        }
 
         this.bindEvents();
 
@@ -75,6 +78,74 @@ const RioClaroApp = {
         this.loadWarehouseData();
 
         this.loadAdminStatus();
+
+        this.applyRole();
+    },
+
+    checkAuthentication() {
+
+        const authenticated =
+            localStorage.getItem(
+                "authenticated"
+            );
+
+        if (
+            authenticated !== "true"
+        ) {
+
+            if (
+                window.location.pathname !==
+                "/login"
+            ) {
+
+                window.location.href =
+                    "/login";
+            }
+
+            return false;
+        }
+
+        return true;
+    },
+
+    logout() {
+
+        localStorage.clear();
+
+        window.location.href =
+            "/login";
+    },
+
+    applyRole() {
+
+        const role =
+            localStorage.getItem(
+                "role"
+            );
+
+        if (!role) {
+            return;
+        }
+
+        document
+            .querySelectorAll(
+                "[data-role]"
+            )
+            .forEach(el => {
+
+                el.style.display =
+                    "none";
+            });
+
+        document
+            .querySelectorAll(
+                `[data-role="${role}"]`
+            )
+            .forEach(el => {
+
+                el.style.display =
+                    "block";
+            });
     },
 
     bindEvents() {
@@ -85,7 +156,8 @@ const RioClaroApp = {
             )
             ?.addEventListener(
                 "click",
-                () => this.sendQuestion()
+                () =>
+                    this.sendQuestion()
             );
 
         document
@@ -94,7 +166,8 @@ const RioClaroApp = {
             )
             ?.addEventListener(
                 "click",
-                () => this.uploadInvoice()
+                () =>
+                    this.uploadInvoice()
             );
 
         document
@@ -103,7 +176,8 @@ const RioClaroApp = {
             )
             ?.addEventListener(
                 "click",
-                () => this.startSpeech()
+                () =>
+                    this.startSpeech()
             );
 
         document
@@ -115,9 +189,12 @@ const RioClaroApp = {
                 event => {
 
                     if (
+
                         event.key ===
                             "Enter" &&
+
                         !event.shiftKey
+
                     ) {
 
                         event.preventDefault();
@@ -126,39 +203,6 @@ const RioClaroApp = {
                     }
                 }
             );
-
-        this.activateMenu();
-    },
-
-    activateMenu() {
-
-        document
-            .querySelectorAll(
-                ".sidebar a"
-            )
-            .forEach(link => {
-
-                link.addEventListener(
-                    "click",
-
-                    function () {
-
-                        document
-                            .querySelectorAll(
-                                ".sidebar a"
-                            )
-                            .forEach(item =>
-                                item.classList.remove(
-                                    "active"
-                                )
-                            );
-
-                        this.classList.add(
-                            "active"
-                        );
-                    }
-                );
-            });
     },
 
     async checkHealth() {
@@ -174,9 +218,11 @@ const RioClaroApp = {
                 await response.json();
 
             this.updateStatus(
+
                 response.ok &&
+
                 data.status ===
-                "healthy"
+                    "healthy"
             );
 
         } catch {
@@ -187,40 +233,38 @@ const RioClaroApp = {
         }
     },
 
-    updateStatus(
-        healthy
-    ) {
+    updateStatus(ok) {
 
-        const state =
-            healthy
+        const value =
+            ok
                 ? "🟢 Disponible"
                 : "🔴 Error";
 
         this.setText(
             "openAIStatus",
-            state
+            value
         );
 
         this.setText(
             "openAIStatusLabel",
-            state
+            value
         );
 
         this.setText(
             "docStatus",
-            state
+            value
         );
 
         this.setText(
             "systemStatus",
-            healthy
+            ok
                 ? "🟢 Operativa"
                 : "🔴 Error"
         );
 
         this.setText(
             "statusMetric",
-            healthy
+            ok
                 ? "🟢 Operativo"
                 : "🔴 Error"
         );
@@ -257,7 +301,8 @@ const RioClaroApp = {
 
         this.conversationHistory.push({
 
-            role: "user",
+            role:
+                "user",
 
             content:
                 question
@@ -279,6 +324,7 @@ const RioClaroApp = {
                         method: "POST",
 
                         headers: {
+
                             "Content-Type":
                                 "application/json"
                         },
@@ -301,16 +347,15 @@ const RioClaroApp = {
 
                 throw new Error(
                     data.message ||
-                    "Error del servidor."
+                    "Error IA"
                 );
             }
 
-            const answer =
-                data.answer ||
-                "Sin respuesta.";
-
             this.appendMessage(
-                answer,
+
+                data.answer ||
+                "Sin respuesta.",
+
                 "assistant"
             );
 
@@ -320,7 +365,7 @@ const RioClaroApp = {
                     "assistant",
 
                 content:
-                    answer
+                    data.answer
             });
 
             this.trimHistory();
@@ -333,15 +378,6 @@ const RioClaroApp = {
             );
 
         } catch (error) {
-
-            console.error(
-                error
-            );
-
-            this.appendMessage(
-                error.message,
-                "assistant"
-            );
 
             this.showMessage(
                 error.message,
@@ -360,8 +396,11 @@ const RioClaroApp = {
     trimHistory() {
 
         if (
+
             this.conversationHistory.length >
+
             this.MAX_HISTORY
+
         ) {
 
             this.conversationHistory =
@@ -434,14 +473,6 @@ const RioClaroApp = {
             const data =
                 await response.json();
 
-            if (!response.ok) {
-
-                throw new Error(
-                    data.message ||
-                    "Error procesando factura."
-                );
-            }
-
             const output =
                 document.getElementById(
                     "invoiceResult"
@@ -457,27 +488,11 @@ const RioClaroApp = {
                     );
             }
 
-            this.invoiceCounter++;
-
-            this.setText(
-                "invoiceCounter",
-                this.invoiceCounter
-            );
-
             await this.analyzeInvoiceWithAI(
                 data.data
             );
 
-            this.showMessage(
-                "Factura procesada correctamente.",
-                "success"
-            );
-
         } catch (error) {
-
-            console.error(
-                error
-            );
 
             this.showMessage(
                 error.message,
@@ -497,26 +512,12 @@ const RioClaroApp = {
         invoiceData
     ) {
 
-        const analysis =
-            document.getElementById(
-                "invoiceAnalysis"
-            );
-
         try {
-
-            if (analysis) {
-
-                analysis.innerHTML = `
-                    <div class="loader"></div>
-                    <div class="analysis-section">
-                        Analizando factura con GPT‑5.4‑mini...
-                    </div>
-                `;
-            }
 
             const response =
                 await fetch(
-                    this.API.INVOICE_ANALYZE,
+                    this.API
+                        .INVOICE_ANALYZE,
                     {
                         method: "POST",
 
@@ -540,17 +541,9 @@ const RioClaroApp = {
             const data =
                 await response.json();
 
-            if (!response.ok) {
-
-                throw new Error(
-                    data.message ||
-                    "Error IA"
-                );
-            }
-
             this.renderInvoiceAnalysis(
                 data.analysis ||
-                "Sin análisis disponible."
+                "Sin análisis"
             );
 
         } catch (error) {
@@ -558,18 +551,6 @@ const RioClaroApp = {
             console.error(
                 error
             );
-
-            if (analysis) {
-
-                analysis.innerHTML = `
-                    <div class="analysis-risk-high">
-                        Error
-                    </div>
-                    <div class="analysis-section">
-                        ${error.message}
-                    </div>
-                `;
-            }
         }
     },
 
@@ -577,53 +558,20 @@ const RioClaroApp = {
         text
     ) {
 
-        const container =
+        const analysis =
             document.getElementById(
                 "invoiceAnalysis"
             );
 
-        if (!container) {
+        if (!analysis) {
             return;
         }
 
-        let riskClass =
-            "analysis-risk-low";
-
-        const lower =
-            String(text)
-                .toLowerCase();
-
-        if (
-            lower.includes(
-                "riesgo alto"
-            )
-        ) {
-
-            riskClass =
-                "analysis-risk-high";
-        }
-
-        else if (
-            lower.includes(
-                "riesgo medio"
-            )
-        ) {
-
-            riskClass =
-                "analysis-risk-medium";
-        }
-
-        container.innerHTML = `
+        analysis.innerHTML = `
 
             <div class="analysis-title">
 
                 Informe IA
-
-            </div>
-
-            <div class="${riskClass}">
-
-                Resultado Analizado
 
             </div>
 
@@ -645,38 +593,28 @@ const RioClaroApp = {
 
             const response =
                 await fetch(
-                    this.API.SAMPLE_DASHBOARD
+                    this.API
+                        .SAMPLE_DASHBOARD
                 );
 
             const data =
                 await response.json();
 
-            if (
-                data.facturas_procesadas
-            ) {
+            this.setText(
 
-                this.setText(
-                    "invoiceCounter",
-                    data.facturas_procesadas
-                );
-            }
+                "invoiceCounter",
 
-            if (
-                data.consultas_ia
-            ) {
-
-                this.setText(
-                    "chatCounter",
-                    data.consultas_ia
-                );
-            }
-
-        } catch (error) {
-
-            console.error(
-                error
+                data.facturas_procesadas || 0
             );
-        }
+
+            this.setText(
+
+                "chatCounter",
+
+                data.consultas_ia || 0
+            );
+
+        } catch {}
     },
 
     async loadExecutiveSummary() {
@@ -685,22 +623,17 @@ const RioClaroApp = {
 
             const response =
                 await fetch(
-                    this.API.SAMPLE_SALES
+                    this.API
+                        .SAMPLE_SALES
                 );
 
             const data =
                 await response.json();
 
-            if (
-                !data.total_sales
-            ) {
-                return;
-            }
-
             const value =
                 "$" +
                 Number(
-                    data.total_sales
+                    data.total_sales || 0
                 ).toLocaleString();
 
             this.setText(
@@ -713,12 +646,7 @@ const RioClaroApp = {
                 value
             );
 
-        } catch (error) {
-
-            console.error(
-                error
-            );
-        }
+        } catch {}
     },
 
     async loadCustomerMetrics() {
@@ -727,7 +655,8 @@ const RioClaroApp = {
 
             const response =
                 await fetch(
-                    this.API.SAMPLE_CUSTOMERS
+                    this.API
+                        .SAMPLE_CUSTOMERS
                 );
 
             const data =
@@ -738,12 +667,7 @@ const RioClaroApp = {
                 data.pending_cases || 0
             );
 
-        } catch (error) {
-
-            console.error(
-                error
-            );
-        }
+        } catch {}
     },
 
     async loadWarehouseData() {
@@ -752,23 +676,19 @@ const RioClaroApp = {
 
             const response =
                 await fetch(
-                    this.API.SAMPLE_WAREHOUSE
+                    this.API
+                        .SAMPLE_WAREHOUSE
                 );
 
             const data =
                 await response.json();
 
             console.log(
-                "Warehouse:",
+                "Warehouse",
                 data
             );
 
-        } catch (error) {
-
-            console.error(
-                error
-            );
-        }
+        } catch {}
     },
 
     async loadAdminStatus() {
@@ -777,23 +697,18 @@ const RioClaroApp = {
 
             const response =
                 await fetch(
-                    this.API.SAMPLE_ADMIN
+                    this.API
+                        .SAMPLE_ADMIN
                 );
 
             const data =
                 await response.json();
 
             console.log(
-                "Admin Status:",
                 data
             );
 
-        } catch (error) {
-
-            console.error(
-                error
-            );
-        }
+        } catch {}
     },
 
     startSpeech() {
@@ -820,46 +735,18 @@ const RioClaroApp = {
         recognition.lang =
             "es-MX";
 
-        try {
-
-            recognition.start();
-
-        } catch {
-
-            this.showMessage(
-                "No fue posible iniciar la captura de voz.",
-                "error"
-            );
-
-            return;
-        }
+        recognition.start();
 
         recognition.onresult =
             event => {
 
-                const transcript =
-                    event.results[0][0]
-                    .transcript;
-
-                const textarea =
-                    document.getElementById(
+                document
+                    .getElementById(
                         "question"
-                    );
-
-                if (textarea) {
-
-                    textarea.value =
-                        transcript;
-                }
-            };
-
-        recognition.onerror =
-            () => {
-
-                this.showMessage(
-                    "Error en reconocimiento de voz.",
-                    "error"
-                );
+                    )
+                    .value =
+                        event.results[0][0]
+                        .transcript;
             };
     },
 
@@ -877,17 +764,17 @@ const RioClaroApp = {
             return;
         }
 
-        const item =
+        const div =
             document.createElement(
                 "div"
             );
 
-        item.className =
+        div.className =
             type === "user"
                 ? "user-message"
                 : "ai-message";
 
-        item.innerHTML =
+        div.innerHTML =
             String(text)
                 .replace(
                     /\n/g,
@@ -895,8 +782,7 @@ const RioClaroApp = {
                 );
 
         container.appendChild(
-            item
-        );
+            div );
 
         container.scrollTop =
             container.scrollHeight;
@@ -924,7 +810,7 @@ const RioClaroApp = {
 
     showMessage(
         message,
-        type = "error"
+        type
     ) {
 
         const box =
@@ -978,5 +864,6 @@ const RioClaroApp = {
 
 document.addEventListener(
     "DOMContentLoaded",
-    () => RioClaroApp.initialize()
+    () =>
+        RioClaroApp.initialize()
 );

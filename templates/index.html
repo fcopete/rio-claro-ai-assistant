@@ -18,7 +18,7 @@
         content="#0078D4">
 
     <title>
-        Login | Río Claro AI Assistant
+        Río Claro AI Assistant
     </title>
 
     <!-- Bootstrap -->
@@ -33,192 +33,611 @@
         rel="stylesheet"
         href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
-    <!-- Styles -->
+    <!-- CSS -->
 
     <link
         rel="stylesheet"
         href="/static/css/styles.css">
 
-    <style>
-
-        body {
-
-            min-height: 100vh;
-
-            display: flex;
-
-            justify-content: center;
-
-            align-items: center;
-
-            background:
-                linear-gradient(
-                    135deg,
-                    #0078d4,
-                    #0f172a
-                );
-        }
-
-        .login-card {
-
-            width: 100%;
-
-            max-width: 450px;
-
-            border-radius: 18px;
-
-            overflow: hidden;
-
-            box-shadow:
-                0 12px 30px rgba(
-                    0,
-                    0,
-                    0,
-                    .25
-                );
-        }
-
-        .login-header {
-
-            background: white;
-
-            text-align: center;
-
-            padding: 30px;
-        }
-
-        .login-header i {
-
-            font-size: 3rem;
-
-            color: #0078d4;
-        }
-
-        .login-body {
-
-            background: white;
-
-            padding: 30px;
-        }
-
-        .login-users {
-
-            margin-top: 20px;
-
-            color: #64748b;
-
-            font-size: .9rem;
-        }
-
-    </style>
-
 </head>
 
 <body>
 
-    <div class="login-card">
+    <!-- SIDEBAR -->
 
-        <div class="login-header">
+    <aside class="sidebar">
 
-            <i class="bi bi-building"></i>
+        <div class="brand">
 
-            <h2 class="mt-3">
+            <h3>
+
+                <i class="bi bi-building"></i>
 
                 Río Claro
 
-            </h2>
+            </h3>
 
-            <p>
+            <span>
 
                 AI Assistant
 
-            </p>
+            </span>
 
         </div>
 
-        <div class="login-body">
+        <nav>
 
-            <div
-                id="loginMessage"
-                class="alert alert-danger d-none">
-            </div>
+            <a href="#dashboard">
+                <i class="bi bi-speedometer2"></i>
+                Dashboard
+            </a>
 
-            <div class="mb-3">
+            <a href="#facturas">
+                <i class="bi bi-file-earmark-text"></i>
+                Facturas
+            </a>
 
-                <label
-                    class="form-label">
+            <a href="#chat">
+                <i class="bi bi-robot"></i>
+                Asistente IA
+            </a>
 
-                    Usuario
+            <a href="#estado">
+                <i class="bi bi-heart-pulse"></i>
+                Estado
+            </a>
 
-                </label>
+            <a href="#clientes">
+                <i class="bi bi-people"></i>
+                Clientes
+            </a>
 
-                <input
-                    id="username"
-                    type="text"
-                    class="form-control"
-                    placeholder="Usuario">
+            <a href="#finanzas">
+                <i class="bi bi-cash-stack"></i>
+                Finanzas
+            </a>
 
-            </div>
+            <a href="#reportes">
+                <i class="bi bi-bar-chart"></i>
+                Reportes
+            </a>
 
-            <div class="mb-3">
+            <a href="#admin">
+                <i class="bi bi-gear"></i>
+                Administración
+            </a>
 
-                <label
-                    class="form-label">
+        </nav>
 
-                    Contraseña
+    </aside>
 
-                </label>
+    <!-- MAIN -->
 
-                <input
-                    id="password"
-                    type="password"
-                    class="form-control"
-                    placeholder="Contraseña">
+    <main class="main-content">
+
+        <!-- TOPBAR -->
+
+        <header class="topbar d-flex justify-content-between align-items-center">
+
+            <div>
+
+                <h2 class="mb-1">
+
+                    Río Claro AI Assistant
+
+                </h2>
+
+                <small>
+
+                    Azure OpenAI + Azure AI Document Intelligence
+
+                </small>
 
             </div>
 
             <button
-                id="loginButton"
-                type="button"
-                class="btn btn-primary w-100">
+                class="btn btn-outline-danger"
+                onclick="RioClaroApp.logout()">
 
-                <i class="bi bi-box-arrow-in-right"></i>
+                <i class="bi bi-box-arrow-right"></i>
 
-                Iniciar Sesión
+                Salir
 
             </button>
 
-            <div class="login-users">
+        </header>
 
-                <strong>
-                    Usuarios disponibles
-                </strong>
+        <div class="container-fluid p-4">
 
-                <ul class="mt-2">
+            <!-- MENSAJES -->
 
-                    <li>DIRGEN</li>
-
-                    <li>COBRANZA</li>
-
-                    <li>GERENCIA</li>
-
-                    <li>BODEGA</li>
-
-                    <li>SISTEMAS</li>
-
-                </ul>
-
+            <div
+                id="messageBox"
+                class="hidden"
+                role="alert"
+                aria-live="polite">
             </div>
+
+            <!-- KPI -->
+
+            <section id="dashboard">
+
+                <div class="row g-4">
+
+                    <div class="col-lg-3 col-md-6">
+
+                        <div class="metric-card">
+
+                            <h6>Azure OpenAI</h6>
+
+                            <h3 id="openAIStatus">
+                                🟢 Disponible
+                            </h3>
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-lg-3 col-md-6">
+
+                        <div class="metric-card">
+
+                            <h6>Facturas</h6>
+
+                            <h3 id="invoiceCounter">
+                                0
+                            </h3>
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-lg-3 col-md-6">
+
+                        <div class="metric-card">
+
+                            <h6>Consultas IA</h6>
+
+                            <h3 id="chatCounter">
+                                0
+                            </h3>
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-lg-3 col-md-6">
+
+                        <div class="metric-card">
+
+                            <h6>Estado</h6>
+
+                            <h3 id="statusMetric">
+                                🟢 Operativo
+                            </h3>
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-lg-3 col-md-6">
+
+                        <div class="metric-card">
+
+                            <h6>Ventas Totales</h6>
+
+                            <h3 id="salesMetric">
+                                $0
+                            </h3>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+            <!-- GRÁFICOS -->
+
+            <section
+                id="charts"
+                class="mt-4">
+
+                <div class="row g-4">
+
+                    <div class="col-lg-6">
+
+                        <div class="card dashboard-card">
+
+                            <div class="card-header">
+
+                                📈 Ventas por Sucursal
+
+                            </div>
+
+                            <div class="card-body">
+
+                                <canvas id="salesChart"></canvas>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-lg-6">
+
+                        <div class="card dashboard-card">
+
+                            <div class="card-header">
+
+                                👥 Clientes por Prioridad
+
+                            </div>
+
+                            <div class="card-body">
+
+                                <canvas id="customerChart"></canvas>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-lg-12">
+
+                        <div class="card dashboard-card">
+
+                            <div class="card-header">
+
+                                📄 Facturación
+
+                            </div>
+
+                            <div class="card-body">
+
+                                <canvas id="invoiceChart"></canvas>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+            <!-- FACTURAS -->
+
+            <section
+                id="facturas"
+                class="mt-4">
+
+                <div class="card dashboard-card">
+
+                    <div class="card-header">
+
+                        📄 Procesamiento de Facturas
+
+                    </div>
+
+                    <div class="card-body">
+
+                        <input
+                            id="invoiceFile"
+                            class="form-control"
+                            type="file"
+                            accept=".pdf,.png,.jpg,.jpeg">
+
+                        <button
+                            id="uploadButton"
+                            class="btn btn-primary mt-3">
+
+                            Analizar Factura
+
+                        </button>
+
+                        <div
+                            id="invoiceLoader"
+                            class="loader hidden">
+                        </div>
+
+                        <hr>
+
+                        <pre
+                            id="invoiceResult"
+                            class="result-output"></pre>
+
+                        <hr>
+
+                        <h6>
+                            Informe IA
+                        </h6>
+
+                        <div
+                            id="invoiceAnalysis"
+                            class="invoice-analysis-card">
+
+                            <div class="analysis-placeholder">
+
+                                Esperando análisis IA...
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+            <!-- CHAT -->
+
+            <section
+                id="chat"
+                class="mt-4">
+
+                <div class="card dashboard-card">
+
+                    <div class="card-header">
+
+                        🤖 Asistente Inteligente
+
+                    </div>
+
+                    <div class="card-body">
+
+                        <div
+                            id="chatContainer"
+                            class="chat-box">
+
+                            <div class="ai-message">
+
+                                Hola, soy Río Claro AI Assistant.
+
+                            </div>
+
+                        </div>
+
+                        <div
+                            id="chatLoader"
+                            class="loader hidden">
+                        </div>
+
+                        <textarea
+                            id="question"
+                            class="form-control mt-3"
+                            rows="3"
+                            maxlength="1000"
+                            placeholder="Escribe una pregunta..."></textarea>
+
+                        <div class="d-flex gap-2 mt-3">
+
+                            <button
+                                id="chatButton"
+                                class="btn btn-primary">
+
+                                <i class="bi bi-send"></i>
+
+                                Enviar
+
+                            </button>
+
+                            <button
+                                id="speechButton"
+                                class="btn btn-success">
+
+                                🎤 Hablar
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+            <!-- ESTADO -->
+
+            <section
+                id="estado"
+                class="mt-4">
+
+                <div class="card dashboard-card">
+
+                    <div class="card-header">
+
+                        Estado de Servicios
+
+                    </div>
+
+                    <div class="card-body">
+
+                        <ul class="list-group">
+
+                            <li class="list-group-item">
+
+                                Azure OpenAI
+
+                                <span
+                                    id="openAIStatusLabel"
+                                    class="float-end">
+
+                                    🟢 Disponible
+
+                                </span>
+
+                            </li>
+
+                            <li class="list-group-item">
+
+                                Document Intelligence
+
+                                <span
+                                    id="docStatus"
+                                    class="float-end">
+
+                                    🟢 Disponible
+
+                                </span>
+
+                            </li>
+
+                            <li class="list-group-item">
+
+                                Aplicación
+
+                                <span
+                                    id="systemStatus"
+                                    class="float-end">
+
+                                    🟢 Operativa
+
+                                </span>
+
+                            </li>
+
+                        </ul>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+            <!-- CLIENTES -->
+
+            <section
+                id="clientes"
+                class="mt-4"
+                data-role="manager">
+
+                <div class="card dashboard-card">
+
+                    <div class="card-header">
+
+                        Clientes Pendientes
+
+                    </div>
+
+                    <div class="card-body">
+
+                        Casos abiertos:
+
+                        <strong id="pendingCustomers">
+
+                            0
+
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+            <!-- FINANZAS -->
+
+            <section
+                id="finanzas"
+                class="mt-4"
+                data-role="finance">
+
+                <div class="card dashboard-card">
+
+                    <div class="card-header">
+
+                        Finanzas
+
+                    </div>
+
+                    <div class="card-body">
+
+                        Evaluación automática de riesgo financiero.
+
+                    </div>
+
+                </div>
+
+            </section>
+
+            <!-- REPORTES -->
+
+            <section
+                id="reportes"
+                class="mt-4"
+                data-role="director">
+
+                <div class="card dashboard-card">
+
+                    <div class="card-header">
+
+                        Reportes Ejecutivos
+
+                    </div>
+
+                    <div class="card-body">
+
+                        <h3 id="salesMetricReport">
+                            $0
+                        </h3>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+            <!-- ADMIN -->
+
+            <section
+                id="admin"
+                class="mt-4"
+                data-role="admin">
+
+                <div class="card dashboard-card">
+
+                    <div class="card-header">
+
+                        Administración
+
+                    </div>
+
+                    <div class="card-body">
+
+                        <div id="adminStatusResult">
+
+                            Estado general del sistema.
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
 
         </div>
 
-    </div>
+    </main>
 
-    <!-- Login JS -->
+    <!-- Chart.js -->
 
-    <script src="/static/js/login.js"></script>
+    https://cdn.jsdelivr.net/npm/chart.js    </script>
 
-    <!-- Bootstrap JS -->
+    <!-- App -->
+
+    <script
+        src="/static/js/app.js">
+    </script>
+
+    <!-- Bootstrap -->
 
     <script
         src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
