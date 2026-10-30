@@ -1,5 +1,5 @@
 console.log(
-    "LOGIN JS CARGADO"
+    "login.js cargado"
 );
 
 /* ==========================================
@@ -13,6 +13,10 @@ document.addEventListener(
 
 function initializeLogin() {
 
+    console.log(
+        "Inicializando Login"
+    );
+
     checkExistingSession();
 
     const loginButton =
@@ -20,12 +24,12 @@ function initializeLogin() {
             "loginButton"
         );
 
-    const usernameInput =
+    const username =
         document.getElementById(
             "username"
         );
 
-    const passwordInput =
+    const password =
         document.getElementById(
             "password"
         );
@@ -38,17 +42,17 @@ function initializeLogin() {
         );
     }
 
-    if (usernameInput) {
+    if (username) {
 
-        usernameInput.addEventListener(
+        username.addEventListener(
             "keydown",
             handleEnter
         );
     }
 
-    if (passwordInput) {
+    if (password) {
 
-        passwordInput.addEventListener(
+        password.addEventListener(
             "keydown",
             handleEnter
         );
@@ -56,7 +60,7 @@ function initializeLogin() {
 }
 
 /* ==========================================
-   ENTER KEY
+   ENTER
 ========================================== */
 
 function handleEnter(
@@ -101,7 +105,7 @@ async function login() {
     if (!username) {
 
         showLoginError(
-            "Debe capturar un usuario."
+            "Debe ingresar un usuario."
         );
 
         return;
@@ -110,11 +114,13 @@ async function login() {
     if (!password) {
 
         showLoginError(
-            "Debe capturar una contraseña."
+            "Debe ingresar una contraseña."
         );
 
         return;
     }
+
+    showLoader(true);
 
     try {
 
@@ -149,7 +155,7 @@ async function login() {
         } catch {
 
             throw new Error(
-                "La respuesta del servidor no es válida."
+                "El servidor devolvió una respuesta inválida."
             );
         }
 
@@ -189,11 +195,15 @@ async function login() {
         showLoginError(
             error.message
         );
+
+    } finally {
+
+        showLoader(false);
     }
 }
 
 /* ==========================================
-   VERIFY ACTIVE SESSION
+   EXISTING SESSION
 ========================================== */
 
 async function checkExistingSession() {
@@ -240,7 +250,7 @@ async function checkExistingSession() {
     } catch (error) {
 
         console.error(
-            "SESSION CHECK ERROR:",
+            "SESSION ERROR:",
             error
         );
     }
@@ -268,17 +278,7 @@ async function logout() {
         );
     }
 
-    localStorage.removeItem(
-        "authenticated"
-    );
-
-    localStorage.removeItem(
-        "user"
-    );
-
-    localStorage.removeItem(
-        "role"
-    );
+    localStorage.clear();
 
     window.location.href =
         "/login";
@@ -288,41 +288,60 @@ async function logout() {
    UI
 ========================================== */
 
+function showLoader(
+    visible
+) {
+
+    const loader =
+        document.getElementById(
+            "loginLoader"
+        );
+
+    if (!loader) {
+        return;
+    }
+
+    loader.classList.toggle(
+        "hidden",
+        !visible
+    );
+}
+
 function showLoginError(
     message
 ) {
 
-    const container =
+    const box =
         document.getElementById(
             "loginMessage"
         );
 
-    if (!container) {
+    if (!box) {
         return;
     }
 
-    container.textContent =
+    box.textContent =
         message;
 
-    container.classList.remove(
+    box.classList.remove(
         "d-none"
     );
 }
 
 function hideLoginError() {
 
-    const container =
+    const box =
         document.getElementById(
             "loginMessage"
         );
 
-    if (!container) {
+    if (!box) {
         return;
     }
 
-    container.textContent = "";
+    box.textContent = "";
 
-    container.classList.add(
+    box.classList.add(
         "d-none"
     );
 }

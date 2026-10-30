@@ -3,12 +3,15 @@ from config import (
 )
 
 
+# ==========================================
+# GET USER
+# ==========================================
+
 def get_user(
     username
 ):
     """
-    Obtiene un usuario desde
-    la configuración.
+    Obtiene los datos de un usuario.
     """
 
     if not username:
@@ -25,6 +28,10 @@ def get_user(
     )
 
 
+# ==========================================
+# AUTHENTICATE
+# ==========================================
+
 def authenticate(
     username,
     password
@@ -33,8 +40,10 @@ def authenticate(
     Valida usuario y contraseña.
 
     Retorna:
+
         dict -> usuario válido
-        None -> autenticación fallida
+
+        None -> autenticación inválida
     """
 
     user = get_user(
@@ -70,12 +79,15 @@ def authenticate(
     }
 
 
+# ==========================================
+# GET ROLE
+# ==========================================
+
 def get_role(
     username
 ):
     """
-    Obtiene únicamente el rol
-    asociado al usuario.
+    Obtiene el rol de un usuario.
     """
 
     user = get_user(
@@ -91,11 +103,15 @@ def get_role(
     )
 
 
+# ==========================================
+# USER EXISTS
+# ==========================================
+
 def user_exists(
     username
 ):
     """
-    Verifica existencia de usuario.
+    Verifica si un usuario existe.
     """
 
     return (
@@ -106,12 +122,92 @@ def user_exists(
     )
 
 
+# ==========================================
+# USER LIST
+# ==========================================
+
 def list_users():
     """
-    Retorna usuarios disponibles.
-    Útil para ambiente demo.
+    Lista usuarios
+    disponibles en el sistema.
     """
 
     return list(
         DEMO_USERS.keys()
+    )
+
+
+# ==========================================
+# ROLE VALIDATION
+# ==========================================
+
+def has_role(
+    username,
+    role
+):
+    """
+    Verifica si un usuario
+    pertenece a un rol.
+    """
+
+    user_role = get_role(
+        username
+    )
+
+    return (
+        user_role == role
+    )
+
+
+# ==========================================
+# ROLE CHECKS
+# ==========================================
+
+def is_director(
+    username
+):
+
+    return has_role(
+        username,
+        "director"
+    )
+
+
+def is_finance(
+    username
+):
+
+    return has_role(
+        username,
+        "finance"
+    )
+
+
+def is_manager(
+    username
+):
+
+    return has_role(
+        username,
+        "manager"
+    )
+
+
+def is_warehouse(
+    username
+):
+
+    return has_role(
+        username,
+        "warehouse"
+    )
+
+
+def is_admin(
+    username
+):
+
+    return has_role(
+        username,
+        "admin"
     )

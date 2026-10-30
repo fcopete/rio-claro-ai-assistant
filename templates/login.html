@@ -33,7 +33,7 @@
         rel="stylesheet"
         href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
-    <!-- Estilos -->
+    <!-- Styles -->
 
     <link
         rel="stylesheet"
@@ -45,13 +45,11 @@
 
             min-height: 100vh;
 
-            margin: 0;
-
             display: flex;
 
-            justify-content: center;
-
             align-items: center;
+
+            justify-content: center;
 
             background:
                 linear-gradient(
@@ -67,12 +65,12 @@
 
             max-width: 460px;
 
-            border-radius: 18px;
+            border-radius: 20px;
 
             overflow: hidden;
 
             box-shadow:
-                0 15px 40px rgba(
+                0 20px 50px rgba(
                     0,
                     0,
                     0,
@@ -96,13 +94,6 @@
             color: #0078d4;
         }
 
-        .login-header h2 {
-
-            margin-top: 10px;
-
-            margin-bottom: 6px;
-        }
-
         .login-body {
 
             background: white;
@@ -110,20 +101,24 @@
             padding: 30px;
         }
 
-        .login-users {
+        .login-footer {
 
             margin-top: 20px;
 
-            color: #64748b;
-
             font-size: .9rem;
+
+            color: #64748b;
         }
 
-        .login-users ul {
+        .app-version {
 
-            margin-top: 10px;
+            margin-top: 15px;
 
-            padding-left: 20px;
+            text-align: center;
+
+            color: #94a3b8;
+
+            font-size: .85rem;
         }
 
     </style>
@@ -140,13 +135,13 @@
 
             <i class="bi bi-building"></i>
 
-            <h2>
+            <h2 class="mt-3">
 
                 Río Claro
 
             </h2>
 
-            <p>
+            <p class="mb-0">
 
                 AI Assistant
 
@@ -158,19 +153,18 @@
 
         <div class="login-body">
 
-            <!-- Error -->
+            <!-- ERROR -->
 
             <div
                 id="loginMessage"
                 class="alert alert-danger d-none">
             </div>
 
-            <!-- Usuario -->
+            <!-- USUARIO -->
 
             <div class="mb-3">
 
-                <label
-                    class="form-label">
+                <label class="form-label">
 
                     Usuario
 
@@ -180,16 +174,16 @@
                     id="username"
                     type="text"
                     class="form-control"
-                    placeholder="Usuario">
+                    autocomplete="username"
+                    placeholder="Ingrese usuario">
 
             </div>
 
-            <!-- Password -->
+            <!-- PASSWORD -->
 
             <div class="mb-3">
 
-                <label
-                    class="form-label">
+                <label class="form-label">
 
                     Contraseña
 
@@ -199,11 +193,12 @@
                     id="password"
                     type="password"
                     class="form-control"
-                    placeholder="Contraseña">
+                    autocomplete="current-password"
+                    placeholder="Ingrese contraseña">
 
             </div>
 
-            <!-- Botón -->
+            <!-- BOTON -->
 
             <button
                 id="loginButton"
@@ -216,24 +211,86 @@
 
             </button>
 
-            <!-- Usuarios -->
+            <!-- LOADER -->
 
-            <div class="login-users">
+            <div
+                id="loginLoader"
+                class="loader hidden">
+            </div>
+
+            <!-- ROLES -->
+
+            <div class="login-footer">
 
                 <strong>
-
-                    Usuarios disponibles
-
+                    Roles disponibles
                 </strong>
 
-                <ul>
+                <ul class="mt-2">
 
                     <li>
                         DIRGEN
+                        <small>
+                            Director General
+                        </small>
                     </li>
 
                     <li>
                         COBRANZA
+                        <small>
+                            Finanzas
+                        </small>
                     </li>
 
-                 
+                    <li>
+                        GERENCIA
+                        <small>
+                            Gerencia Comercial
+                        </small>
+                    </li>
+
+                    <li>
+                        BODEGA
+                        <small>
+                            Operaciones
+                        </small>
+                    </li>
+
+                    <li>
+                        SISTEMAS
+                        <small>
+                            Administración
+                        </small>
+                    </li>
+
+                </ul>
+
+            </div>
+
+            <!-- VERSION -->
+
+            <div class="app-version">
+
+                Río Claro AI Assistant v1.0
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- LOGIN JS -->
+
+    <script
+        src="/static/js/login.js">
+    </script>
+
+    <!-- BOOTSTRAP -->
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+    </script>
+
+</body>
+
+</html>

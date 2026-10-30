@@ -4,15 +4,16 @@ from dotenv import (
     load_dotenv
 )
 
-# ==========================================
-# LOAD ENV
-# ==========================================
+# ==================================================
+# LOAD ENVIRONMENT VARIABLES
+# ==================================================
 
 load_dotenv()
 
-# ==========================================
+
+# ==================================================
 # HELPERS
-# ==========================================
+# ==================================================
 
 def get_required_env(
     variable_name
@@ -42,9 +43,10 @@ def get_optional_env(
         default_value
     )
 
-# ==========================================
+
+# ==================================================
 # APPLICATION
-# ==========================================
+# ==================================================
 
 APP_NAME = (
     get_optional_env(
@@ -82,9 +84,10 @@ FLASK_DEBUG = (
     == "true"
 )
 
-# ==========================================
+
+# ==================================================
 # FILES
-# ==========================================
+# ==================================================
 
 MAX_UPLOAD_SIZE_MB = int(
     get_optional_env(
@@ -110,9 +113,10 @@ ALLOWED_EXTENSIONS = {
     "jpeg"
 }
 
-# ==========================================
+
+# ==================================================
 # AZURE OPENAI
-# ==========================================
+# ==================================================
 
 AZURE_OPENAI_ENDPOINT = (
     get_required_env(
@@ -139,9 +143,10 @@ AZURE_OPENAI_DEPLOYMENT = (
     )
 )
 
-# ==========================================
+
+# ==================================================
 # DOCUMENT INTELLIGENCE
-# ==========================================
+# ==================================================
 
 DOCUMENT_INTELLIGENCE_ENDPOINT = (
     get_required_env(
@@ -155,9 +160,10 @@ DOCUMENT_INTELLIGENCE_KEY = (
     )
 )
 
-# ==========================================
-# CHAT CONFIG
-# ==========================================
+
+# ==================================================
+# CHAT SETTINGS
+# ==================================================
 
 MAX_CHAT_HISTORY = int(
     get_optional_env(
@@ -180,9 +186,10 @@ CHAT_TEMPERATURE = float(
     )
 )
 
-# ==========================================
+
+# ==================================================
 # SAMPLE DATA
-# ==========================================
+# ==================================================
 
 SAMPLE_DATA_FILE = (
     get_optional_env(
@@ -191,106 +198,55 @@ SAMPLE_DATA_FILE = (
     )
 )
 
-# ==========================================
-# EXECUTIVE DASHBOARD
-# ==========================================
 
-DEFAULT_BRANCHES = (
-    get_optional_env(
-        "DEFAULT_BRANCHES",
-        "Monterrey,León,CDMX,Guadalajara,Querétaro,Puebla"
-    )
-).split(",")
+# ==================================================
+# SYSTEM
+# ==================================================
 
-# ==========================================
-# FINANCE
-# ==========================================
-
-HIGH_RISK_THRESHOLD = int(
-    get_optional_env(
-        "HIGH_RISK_THRESHOLD",
-        100000
-    )
+HEALTH_STATUS_OK = (
+    "healthy"
 )
 
-MEDIUM_RISK_THRESHOLD = int(
-    get_optional_env(
-        "MEDIUM_RISK_THRESHOLD",
-        50000
-    )
+HEALTH_STATUS_ERROR = (
+    "error"
 )
 
-# ==========================================
-# CUSTOMERS
-# ==========================================
-
-PENDING_CUSTOMER_DAYS = int(
-    get_optional_env(
-        "PENDING_CUSTOMER_DAYS",
-        7
-    )
+SYSTEM_PROVIDER = (
+    "Azure OpenAI"
 )
 
-# ==========================================
-# INVENTORY
-# ==========================================
 
-LOW_STOCK_THRESHOLD = int(
-    get_optional_env(
-        "LOW_STOCK_THRESHOLD",
-        50
-    )
-)
-
-# ==========================================
-# FEATURES
-# ==========================================
-
-ENABLE_SPEECH_RECOGNITION = (
-    get_optional_env(
-        "ENABLE_SPEECH_RECOGNITION",
-        "true"
-    ).lower()
-    == "true"
-)
-
-ENABLE_SAMPLE_DATA = (
-    get_optional_env(
-        "ENABLE_SAMPLE_DATA",
-        "true"
-    ).lower()
-    == "true"
-)
-
-ENABLE_INVOICE_AI_ANALYSIS = (
-    get_optional_env(
-        "ENABLE_INVOICE_AI_ANALYSIS",
-        "true"
-    ).lower()
-    == "true"
-)
-
-ENABLE_EXECUTIVE_DASHBOARD = (
-    get_optional_env(
-        "ENABLE_EXECUTIVE_DASHBOARD",
-        "true"
-    ).lower()
-    == "true"
-)
-
-# ==========================================
+# ==================================================
 # ROLES
-# ==========================================
+# ==================================================
 
-ROLE_DIRECTOR = "director"
-ROLE_FINANCE = "finance"
-ROLE_MANAGER = "manager"
-ROLE_WAREHOUSE = "warehouse"
-ROLE_ADMIN = "admin"
+ROLE_DIRECTOR = (
+    "director"
+)
 
-# ==========================================
-# LOGIN USERS
-# ==========================================
+ROLE_FINANCE = (
+    "finance"
+)
+
+ROLE_MANAGER = (
+    "manager"
+)
+
+ROLE_WAREHOUSE = (
+    "warehouse"
+)
+
+ROLE_ADMIN = (
+    "admin"
+)
+
+
+# ==================================================
+# USERS
+# ==================================================
+# Para producción se recomienda mover estas
+# credenciales a variables de entorno.
+# ==================================================
 
 DEMO_USERS = {
 
@@ -354,3 +310,106 @@ DEMO_USERS = {
             ROLE_ADMIN
     }
 }
+
+
+# ==================================================
+# EXECUTIVE DASHBOARD
+# ==================================================
+
+DEFAULT_BRANCHES = (
+
+    get_optional_env(
+
+        "DEFAULT_BRANCHES",
+
+        (
+            "Monterrey,"
+            "León,"
+            "CDMX,"
+            "Guadalajara,"
+            "Querétaro,"
+            "Puebla"
+        )
+    )
+
+).split(",")
+
+
+# ==================================================
+# FINANCE
+# ==================================================
+
+HIGH_RISK_THRESHOLD = int(
+    get_optional_env(
+        "HIGH_RISK_THRESHOLD",
+        100000
+    )
+)
+
+MEDIUM_RISK_THRESHOLD = int(
+    get_optional_env(
+        "MEDIUM_RISK_THRESHOLD",
+        50000
+    )
+)
+
+
+# ==================================================
+# CUSTOMERS
+# ==================================================
+
+PENDING_CUSTOMER_DAYS = int(
+    get_optional_env(
+        "PENDING_CUSTOMER_DAYS",
+        7
+    )
+)
+
+
+# ==================================================
+# WAREHOUSE
+# ==================================================
+
+LOW_STOCK_THRESHOLD = int(
+    get_optional_env(
+        "LOW_STOCK_THRESHOLD",
+        50
+    )
+)
+
+
+# ==================================================
+# FEATURE FLAGS
+# ==================================================
+
+ENABLE_SPEECH_RECOGNITION = (
+    get_optional_env(
+        "ENABLE_SPEECH_RECOGNITION",
+        "true"
+    ).lower()
+    == "true"
+)
+
+ENABLE_SAMPLE_DATA = (
+    get_optional_env(
+        "ENABLE_SAMPLE_DATA",
+        "true"
+    ).lower()
+    == "true"
+)
+
+ENABLE_INVOICE_AI_ANALYSIS = (
+    get_optional_env(
+        "ENABLE_INVOICE_AI_ANALYSIS",
+        "true"
+    ).lower()
+    == "true"
+)
+
+ENABLE_EXECUTIVE_DASHBOARD = (
+    get_optional_env(
+        "ENABLE_EXECUTIVE_DASHBOARD",
+        "true"
+    ).lower()
+    == "true"
+)

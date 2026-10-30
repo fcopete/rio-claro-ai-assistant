@@ -6,7 +6,10 @@ from flask import (
 )
 
 from services.auth_service import (
-    authenticate
+    authenticate,
+    get_role,
+    user_exists,
+    list_users
 )
 
 auth_bp = Blueprint(
@@ -14,6 +17,9 @@ auth_bp = Blueprint(
     __name__
 )
 
+# ==========================================
+# LOGIN
+# ==========================================
 
 @auth_bp.route(
     "/login",
@@ -27,8 +33,20 @@ def login():
             request.get_json()
         )
 
+        if not payload:
+
+            return jsonify({
+
+                "success": False,
+
+                "message":
+                    "JSON payload required"
+
+            }), 400
+
         username = (
-            payload.get(
+            payload
+            .get(
                 "username",
                 ""
             )
@@ -37,12 +55,35 @@ def login():
         )
 
         password = (
-            payload.get(
+            payload
+            .get(
                 "password",
                 ""
             )
             .strip()
         )
+
+        if not username:
+
+            return jsonify({
+
+                "success": False,
+
+                "message":
+                    "Username required"
+
+            }), 400
+
+        if not password:
+
+            return jsonify({
+
+                "success": False,
+
+                "message":
+                    "Password required"
+
+            }), 400
 
         user = authenticate(
             username,
@@ -60,20 +101,21 @@ def login():
 
             }), 401
 
-        session["user"] = (
-            username
-        )
+        session.clear()
 
-        session["role"] = (
-            user["role"]
-        )
+        session["authenticated"] = True
+        session["user"] = user["username"]
+        session["role"] = user["role"]
 
         return jsonify({
 
             "success": True,
 
+            "authenticated":
+                True,
+
             "user":
-                username,
+                user["username"],
 
             "role":
                 user["role"]
@@ -92,20 +134,44 @@ def login():
         }), 500
 
 
+# ==========================================
+# LOGOUT
+# ==========================================
+
 @auth_bp.route(
     "/logout",
     methods=["POST"]
 )
 def logout():
 
-    session.clear()
+    try:
 
-    return jsonify({
+        session.clear()
 
-        "success": True
+        return jsonify({
 
-    })
+            "success": True,
 
+            "message":
+                "Sesión finalizada"
+
+        })
+
+    except Exception as ex:
+
+        return jsonify({
+
+            "success": False,
+
+            "message":
+                str(ex)
+
+        }), 500
+
+
+# ==========================================
+# CURRENT USER
+# ==========================================
 
 @auth_bp.route(
     "/me",
@@ -113,26 +179,43 @@ def logout():
 )
 def me():
 
-    return jsonify({
+    try:
 
-        "authenticated":
-            bool(
+        return jsonify({
+
+            "authenticated":
+                bool(
+                    session.get(
+                        "authenticated"
+                    )
+                ),
+
+            "user":
                 session.get(
                     "user"
+                ),
+
+            "role":
+                session.get(
+                    "role"
                 )
-            ),
+        })
 
-        "user":
-            session.get(
-                "user"
-            ),
+    except Exception as ex:
 
-        "role":
-            session.get(
-                "role"
-            )
-    })
+        return jsonify({
 
+            "success": False,
+
+            "message":
+                str(ex)
+
+        }), 500
+
+
+# ==========================================
+# VALIDATE SESSION
+# ==========================================
 
 @auth_bp.route(
     "/validate",
@@ -140,9 +223,14 @@ def me():
 )
 def validate():
 
-    if not session.get(
-        "user"
-    ):
+    authenticated = (
+        session.get(
+            "authenticated",
+            False
+        )
+    )
+
+    if not authenticated:
 
         return jsonify({
 
@@ -169,4 +257,105 @@ def validate():
             session.get(
                 "role"
             )
+    })
+
+
+# ==========================================
+# ROLE
+# ==========================================
+
+@auth_bp.route(
+    "/role",
+    methods=["GET"]
+)
+def role():
+
+    if not session.get(
+        "authenticated"
+    ):
+
+        return jsonify({
+
+            "success": False,
+
+            "message":
+                "Not authenticated"
+
+        }), 401
+
+    return jsonify({
+
+        "success": True,
+
+        "role":
+            session.get(
+                "role"
+            )
+    })
+
+
+# ==========================================
+# USERS (DEMO)
+# ==========================================
+
+@auth_bp.route(
+    "/users",
+    methods=["GET"]
+)
+def users():
+
+    return jsonify({
+
+        "success": True,
+
+        "users":
+            list_users()
+    })
+
+
+# ==========================================
+# USER EXISTS
+# ==========================================
+
+@auth_bp.route(
+    "/exists/<username>",
+    methods=["GET"]
+)
+def exists(
+    username
+):
+
+    return jsonify({
+
+        "success": True,
+
+        "exists":
+            user_exists(
+                username
+            )
+    })
+
+
+# ==========================================
+# ROLE LOOKUP
+# ==========================================
+
+@auth_bp.route(
+    "/user-role/<username>",
+    methods=["GET"]
+)
+def user_role(
+    username
+):
+
+    role = get_role(
+        username
+    )
+
+    return jsonify({
+
+        "success": True,
+
+        "role":
+            role
     })
