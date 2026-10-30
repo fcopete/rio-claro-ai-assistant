@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1">
+
+    <meta
+        name="description"
+        content="Río Claro AI Assistant">
+
+    <meta
+        name="theme-color"
+        content="#0078D4">
+
+    <title>
+        Login | Río Claro AI Assistant
+    </title>
+
+    <!-- Bootstrap -->
+
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+
+    <!-- Bootstrap Icons -->
+
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <!-- Estilos -->
+
+    <link
+        rel="stylesheet"
+        href="/static/css/styles.css">
+
+    <style>
+
+        body {
+
+            min-height: 100vh;
+
+            margin: 0;
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #0078d4,
+                    #0f172a
+                );
+        }
+
+        .login-card {
+
+            width: 100%;
+
+            max-width: 460px;
+
+            border-radius: 18px;
+
+            overflow: hidden;
+
+            box-shadow:
+                0 15px 40px rgba(
+                    0,
+                    0,
+                    0,
+                    .30
+                );
+        }
+
+        .login-header {
+
+            background: white;
+
+            text-align: center;
+
+            padding: 30px;
+        }
+
+        .login-header i {
+
+            font-size: 3.5rem;
+
+            color: #0078d4;
+        }
+
+        .login-header h2 {
+
+            margin-top: 10px;
+
+            margin-bottom: 6px;
+        }
+
+        .login-body {
+
+            background: white;
+
+            padding: 30px;
+        }
+
+        .login-users {
+
+            margin-top: 20px;
+
+            color: #64748b;
+
+            font-size: .9rem;
+        }
+
+        .login-users ul {
+
+            margin-top: 10px;
+
+            padding-left: 20px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <div class="login-card">
+
+        <!-- HEADER -->
+
+        <div class="login-header">
+
+            <i class="bi bi-building"></i>
+
+            <h2>
+
+                Río Claro
+
+            </h2>
+
+            <p>
+
+                AI Assistant
+
+            </p>
+
+        </div>
+
+        <!-- BODY -->
+
+        <div class="login-body">
+
+            <!-- Error -->
+
+            <div
+                id="loginMessage"
+                class="alert alert-danger d-none">
+            </div>
+
+            <!-- Usuario -->
+
+            <div class="mb-3">
+
+                <label
+                    class="form-label">
+
+                    Usuario
+
+                </label>
+
+                <input
+                    id="username"
+                    type="text"
+                    class="form-control"
+                    placeholder="Usuario">
+
+            </div>
+
+            <!-- Password -->
+
+            <div class="mb-3">
+
+                <label
+                    class="form-label">
+
+                    Contraseña
+
+                </label>
+
+                <input
+                    id="password"
+                    type="password"
+                    class="form-control"
+                    placeholder="Contraseña">
+
+            </div>
+
+            <!-- Botón -->
+
+            <button
+                id="loginButton"
+                type="button"
+                class="btn btn-primary w-100">
+
+                <i class="bi bi-box-arrow-in-right"></i>
+
+                Iniciar Sesión
+
+            </button>
+
+            <!-- Usuarios -->
+
+            <div class="login-users">
+
+                <strong>
+
+                    Usuarios disponibles
+
+                </strong>
+
+                <ul>
+
+                    <li>
+                        DIRGEN
+                    </li>
+
+                    <li>
+                        COBRANZA
+                    </li>
+
+                 
