@@ -1,1 +1,21 @@
-{"dashboard":{"ventas_totales":654940},"customers":{"pending_cases":42}}
+{
+  "dashboard": {
+    "facturas_procesadas": 152,
+    "consultas_ia": 356
+  },
+  "executive_summary": {
+    "total_sales": 907355
+  },
+  "customers": {
+    "pending_cases": 42
+  },
+  "warehouse": {
+    "inventory": []
+  },
+  "invoices": [],
+  "admin_status": {
+    "system": "ok",
+    "azure_openai": "ok",
+    "document_ai": "ok"
+  }
+}
