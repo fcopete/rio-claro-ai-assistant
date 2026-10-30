@@ -1,7 +1,4 @@
-from flask import (
-    Blueprint,
-    jsonify
-)
+from flask import Blueprint, jsonify
 
 from services.sample_data_service import (
     load_sample_data
@@ -12,9 +9,6 @@ sample_bp = Blueprint(
     __name__
 )
 
-# ==========================================
-# TODOS LOS DATOS
-# ==========================================
 
 @sample_bp.route(
     "/all",
@@ -22,14 +16,10 @@ sample_bp = Blueprint(
 )
 def all_data():
 
-    data = load_sample_data()
+    return jsonify(
+        load_sample_data()
+    )
 
-    return jsonify(data)
-
-
-# ==========================================
-# DASHBOARD
-# ==========================================
 
 @sample_bp.route(
     "/dashboard",
@@ -47,10 +37,6 @@ def dashboard():
     )
 
 
-# ==========================================
-# VENTAS EJECUTIVAS
-# ==========================================
-
 @sample_bp.route(
     "/sales",
     methods=["GET"]
@@ -66,10 +52,6 @@ def sales():
         )
     )
 
-
-# ==========================================
-# CLIENTES
-# ==========================================
 
 @sample_bp.route(
     "/customers",
@@ -87,10 +69,6 @@ def customers():
     )
 
 
-# ==========================================
-# INVENTARIO / BODEGA
-# ==========================================
-
 @sample_bp.route(
     "/warehouse",
     methods=["GET"]
@@ -106,10 +84,6 @@ def warehouse():
         )
     )
 
-
-# ==========================================
-# FACTURAS
-# ==========================================
 
 @sample_bp.route(
     "/invoices",
@@ -127,10 +101,6 @@ def invoices():
     )
 
 
-# ==========================================
-# ANALISIS IA DEMO
-# ==========================================
-
 @sample_bp.route(
     "/invoice-analysis",
     methods=["GET"]
@@ -147,9 +117,58 @@ def invoice_analysis():
     )
 
 
-# ==========================================
-# ADMINISTRACION
-# ==========================================
+@sample_bp.route(
+    "/inventory",
+    methods=["GET"]
+)
+def inventory():
+
+    data = load_sample_data()
+
+    warehouse_data = data.get(
+        "warehouse",
+        {}
+    )
+
+    return jsonify(
+        warehouse_data.get(
+            "inventory",
+            []
+        )
+    )
+
+
+@sample_bp.route(
+    "/chat-examples",
+    methods=["GET"]
+)
+def chat_examples():
+
+    data = load_sample_data()
+
+    return jsonify(
+        data.get(
+            "chat_examples",
+            []
+        )
+    )
+
+
+@sample_bp.route(
+    "/roles",
+    methods=["GET"]
+)
+def roles():
+
+    data = load_sample_data()
+
+    return jsonify(
+        data.get(
+            "roles",
+            {}
+        )
+    )
+
 
 @sample_bp.route(
     "/admin",
@@ -165,20 +184,3 @@ def admin():
             {}
         )
     )
-
-
-# ==========================================
-# INVENTARIO COMPLETO
-# ==========================================
-
-@sample_bp.route(
-    "/inventory",
-    methods=["GET"]
-)
-def inventory():
-
-    data = load_sample_data()
-
-    warehouse = data.get(
-        "warehouse",
- 
